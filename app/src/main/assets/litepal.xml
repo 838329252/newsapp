@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<litepal>
+    <dbname values="NewsStore"></dbname>
+    <version value="1"></version>
+    <list>
+        <mapping class="com.example.newsapp.db.News"></mapping>
+        <mapping class="com.example.newsapp.db.Comment"></mapping>
+        <mapping class="com.example.newsapp.db.User"></mapping>
+    </list>
+</litepal>
