@@ -9,6 +9,10 @@ import com.example.newsapp.adapter.TabPageAdapter;
 import com.example.newsapp.fragment.BusinessFragment;
 import com.example.newsapp.fragment.MeFragment;
 import com.example.newsapp.fragment.TabFragment;
+
+import org.litepal.LitePal;
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 

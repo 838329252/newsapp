@@ -11,7 +11,7 @@ public class User extends DataSupport {
     private String userAccount;
     private String password;
     private int headPicture;
-    private List<News> newsList=new ArrayList<News>();
+    private List<News> newsList=new ArrayList<News>();  //comment 和user是多对一的关系，以后记得改
 
     public int getId() {
         return id;
@@ -60,4 +60,5 @@ public class User extends DataSupport {
     public void setNewsList(List<News> newsList) {
         this.newsList = newsList;
     }
+
 }

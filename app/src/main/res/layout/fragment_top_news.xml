@@ -7,13 +7,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
+            android:id="@+id/topLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <include layout="@layout/item_picture_large"/>
-            <include layout="@layout/item_picture_small"/>
-            <include layout="@layout/item_picture_three"/>
-            <include layout="@layout/item_picture_two"/>
+
         </LinearLayout>
 
     </ScrollView>

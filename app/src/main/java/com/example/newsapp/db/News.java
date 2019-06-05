@@ -13,7 +13,7 @@ public class News extends DataSupport {
     private String content;
     private String time;
     private List<Integer> pictureList=new ArrayList<Integer>();
-    private String layoutType;
+    private int layoutType;
     private String column;
     private int like;
     private int dislike;
@@ -80,11 +80,11 @@ public class News extends DataSupport {
 
 
 
-    public String getLayoutType() {
+    public int getLayoutType() {
         return layoutType;
     }
 
-    public void setLayoutType(String layoutType) {
+    public void setLayoutType(int layoutType) {
         this.layoutType = layoutType;
     }
 
@@ -112,5 +112,19 @@ public class News extends DataSupport {
         this.dislike = dislike;
     }
 
+    public List<Comment> getCommentList() {
+        return commentList;
+    }
 
+    public void setCommentList(List<Comment> commentList) {
+        this.commentList = commentList;
+    }
+
+    public List<User> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(List<User> userList) {
+        this.userList = userList;
+    }
 }

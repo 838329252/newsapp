@@ -66,4 +66,5 @@ public class Comment extends DataSupport {
     public void setNews(News news) {
         this.news = news;
     }
+
 }

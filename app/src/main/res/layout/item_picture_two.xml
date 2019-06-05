@@ -2,8 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
-    <include layout="@layout/item_picture_two2"/>
-    <include layout="@layout/time"/>
-
+    android:orientation="vertical"
+    android:layout_marginVertical="8dp">
+    <include layout="@layout/line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/news_picture_left"
+            android:layout_width="175dp"
+            android:layout_height="175dp"
+            android:layout_weight="1"
+            android:src="@drawable/fcrs"
+            android:scaleType="centerCrop"
+            android:layout_marginRight="8dp"/>
+        <ImageView
+            android:id="@+id/news_picture_right"
+            android:layout_width="175dp"
+            android:layout_height="175dp"
+            android:layout_weight="1"
+            android:src="@drawable/fcrs"
+            android:scaleType="centerCrop"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="8dp">
+        <include layout="@layout/title2"/>
+        <include layout="@layout/time"/>
+    </LinearLayout>
 </LinearLayout>

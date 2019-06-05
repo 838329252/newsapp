@@ -5,12 +5,12 @@ import org.litepal.crud.DataSupport;
 
 import java.util.List;
 
-public class JDBC {
+public class JDBC extends DataSupport{
     public void getDatabase(){
         LitePal.getDatabase();
     }
     public void InsertDataToNews(String title,String author,String content,
-                                 String time,List pictureList,String layoutType,
+                                 String time,List pictureList,int layoutType,
                                  String column,int like,int dislike,List relatedList){
         News news=new News();
         news.setTitle(title);
@@ -42,12 +42,22 @@ public class JDBC {
         user.save();
     }
     public List findNewsByColumnForCover (String column){
-        List<News> list=DataSupport.
-                select("title","pictureList","layoutType").
+        List list=DataSupport.
+                select("title","pictureList","layoutType","column").
                 where("column=?",column).
                 order("id desc").
                 find(News.class);
         return list;
+    }
+    public void deleteAll(String className){
+        switch (className){
+            case "News":
+                DataSupport.deleteAll(News.class);break;
+            case "Comment":
+                DataSupport.deleteAll(Comment.class);break;
+            case "User":
+                DataSupport.deleteAll(User.class);break;
+        }
     }
 
 }
