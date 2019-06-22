@@ -5,11 +5,11 @@ import org.litepal.crud.DataSupport;
 public class Comment extends DataSupport {
     private int id;
     private String content;
-    private int like;
     private int news_id;
     private int user_id;
     private User user;
     private News news;
+    private String time;
 
     public int getId() {
         return id;
@@ -25,14 +25,6 @@ public class Comment extends DataSupport {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public int getLike() {
-        return like;
-    }
-
-    public void setLike(int like) {
-        this.like = like;
     }
 
     public int getNews_id() {
@@ -65,6 +57,14 @@ public class Comment extends DataSupport {
 
     public void setNews(News news) {
         this.news = news;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
 }

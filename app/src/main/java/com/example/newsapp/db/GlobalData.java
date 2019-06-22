@@ -1,13 +1,23 @@
 package com.example.newsapp.db;
 
-public class GlobalData {
-    private JDBC jdbc;
-  /*  pictureList=new ArrayList<>();
-        relatedList=new ArrayList<>();
-        pictureList.add(R.drawable.fcrs);
-        pictureList.add(R.drawable.lps);
-        jdbc=new JDBC();*/
-       /* jdbc.InsertDataToNews("Tony takes you travel around the city","Peggy Lin",
-                "Hello","2019.6.5",pictureList,R.layout.item_picture_large,
-                "CULTURE",0,0,relatedList);*/
+import com.example.newsapp.R;
+
+import java.util.ArrayList;
+import java.util.List;
+import com.example.newsapp.db.JDBC;
+
+import org.litepal.crud.DataSupport;
+
+public class GlobalData extends DataSupport {
+    private static String userAccount;
+
+    public static int getUserId() {
+        List<User> list=DataSupport.where("userAccount=?",userAccount).find(User.class);
+        int user_id=list.get(0).getId();
+        return user_id;
+    }
+
+    public static void setUserAccount(String userAccount) {
+        GlobalData.userAccount = userAccount;
+    }
 }

@@ -39,6 +39,5 @@ public class BusinessFragment extends Fragment {
         showNews=new ShowNews("BUSINESS",businessLayout,itemBottomVisibility);
          return view;
     }
-
 }
 

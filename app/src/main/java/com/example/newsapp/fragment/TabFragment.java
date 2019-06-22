@@ -41,15 +41,7 @@ public class TabFragment extends Fragment {
         //创建适配器
 
         //设置ViewPager的适配器
-
-
-        //使用Tablayout的newTab()创建tab
-       // TabLayout.Tab tab1 = mTabLayout.newTab().setText("tab1");//设置tab项显示的文字
-       // TabLayout.Tab tab2 = mTabLayout.newTab().setText("tab2");
-       // TabLayout.Tab tab3 = mTabLayout.newTab().setText("tab3");
-        //mTabLayout.addTab(tab1);
-        //mTabLayout.addTab(tab2);
-        //mTabLayout.addTab(tab3);
+        
         mTabNames=new String[]{"TOP NEWS","BUSINESS","OPINIONS","CULTURE"};
         pageAdapter = new TabPageAdapter(getChildFragmentManager(), fragments,mTabNames);  //getChildFragmentManager()是在fragment 里面子容器的碎片管理。
         mViewPager.setAdapter(pageAdapter);

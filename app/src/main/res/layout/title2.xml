@@ -6,7 +6,6 @@
         android:id="@+id/news_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tony takes you travel around the city"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/colorBlack" />

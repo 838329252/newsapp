@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <litepal>
     <dbname value="NewsStore"></dbname>
-    <version value="1"></version>
+    <version value="6"></version>
     <list>
         <mapping class="com.example.newsapp.db.News"></mapping>
         <mapping class="com.example.newsapp.db.Comment"></mapping>
         <mapping class="com.example.newsapp.db.User"></mapping>
+        <mapping class="com.example.newsapp.db.Picture"></mapping>
+        <mapping class="com.example.newsapp.db.Relate"></mapping>
+        <mapping class="com.example.newsapp.db.LikeNews"></mapping>
+        <mapping class="com.example.newsapp.db.DislikeNews"></mapping>
     </list>
 </litepal>

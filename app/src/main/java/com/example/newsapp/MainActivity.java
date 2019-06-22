@@ -1,11 +1,13 @@
 package com.example.newsapp;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import com.example.newsapp.adapter.TabPageAdapter;
+import com.example.newsapp.db.News;
 import com.example.newsapp.fragment.BusinessFragment;
 import com.example.newsapp.fragment.MeFragment;
 import com.example.newsapp.fragment.TabFragment;

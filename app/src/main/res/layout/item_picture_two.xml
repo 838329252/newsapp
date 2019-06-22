@@ -13,15 +13,15 @@
             android:layout_width="175dp"
             android:layout_height="175dp"
             android:layout_weight="1"
-            android:src="@drawable/fcrs"
             android:scaleType="centerCrop"
+            android:src="@drawable/picture_1"
             android:layout_marginRight="8dp"/>
         <ImageView
             android:id="@+id/news_picture_right"
             android:layout_width="175dp"
             android:layout_height="175dp"
             android:layout_weight="1"
-            android:src="@drawable/fcrs"
+            android:src="@drawable/picture_2"
             android:scaleType="centerCrop"/>
     </LinearLayout>
     <LinearLayout

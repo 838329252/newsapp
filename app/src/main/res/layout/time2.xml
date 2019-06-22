@@ -8,8 +8,7 @@
         android:id="@+id/news_column"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorColumn"
-        android:text="CHINA"/>
+        android:textColor="@color/colorColumn" />
 <!--    <View
         android:layout_width="1px"
         android:layout_height="20dp"

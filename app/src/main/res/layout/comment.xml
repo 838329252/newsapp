@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Latest Comment"
+        android:textColor="@color/colorBlack"
+        android:textSize="20sp"
+        android:layout_marginBottom="16dp"
+        android:textStyle="bold"/>
+    <LinearLayout
+        android:id="@+id/latestComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <include layout="@layout/item_comment"/>
+    </LinearLayout>
+
+
+</LinearLayout>

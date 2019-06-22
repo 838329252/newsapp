@@ -18,7 +18,7 @@
                 android:id="@+id/news_picture_one"
                 android:layout_width="223dp"
                 android:layout_height="178dp"
-                android:src="@drawable/lps"
+                android:src="@drawable/picture_1"
                 android:scaleType="centerCrop"/>
 
             <LinearLayout
@@ -32,14 +32,14 @@
                     android:layout_width="135dp"
                     android:layout_height="85dp"
                     android:layout_marginBottom="8dp"
-                    android:src="@drawable/fcrs"
+                    android:src="@drawable/picture_2"
                     android:scaleType="centerCrop"/>
 
                 <ImageView
                     android:id="@+id/news_picture_three"
                     android:layout_width="135dp"
                     android:layout_height="85dp"
-                    android:src="@drawable/fcrs"
+                    android:src="@drawable/picture_2"
                     android:scaleType="centerCrop"/>
 
             </LinearLayout>

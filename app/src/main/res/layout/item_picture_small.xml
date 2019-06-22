@@ -14,9 +14,9 @@
             android:id="@+id/news_picture_small"
             android:layout_width="115dp"
             android:layout_height="84dp"
-            android:src="@drawable/fcrs"
             android:scaleType="centerCrop"
             android:layout_marginRight="8dp"
+            android:src="@drawable/picture_2"
             android:layout_gravity="center_vertical"/>
         <LinearLayout
             android:layout_width="0dp"
@@ -27,7 +27,6 @@
                 android:id="@+id/news_title_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Amasion's union worker in Italy and Germany paln to quit"
                 android:textColor="@color/colorBlack"
                 android:textSize="18sp"/>
             <LinearLayout

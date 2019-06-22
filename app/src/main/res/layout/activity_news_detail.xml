@@ -1,39 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
+
     <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical">
+       <include layout="@layout/back"/>
+       <ScrollView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="vertical">
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="vertical"
+                   android:layout_marginHorizontal="16dp">
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical"
+                       >
+                       <TextView
+                           android:id="@+id/news_title_detail"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:text="Tony takes you travel around the city"
+                           android:textSize="25sp"
+                           android:textStyle="bold"
+                           android:textColor="@color/colorBlack"
+                           android:layout_marginTop="16dp"/>
+                       <TextView
+                           android:id="@+id/news_author"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:text="Peggy Lin"
+                           android:layout_marginTop="16dp"/>
+                       <TextView
+                           android:id="@+id/news_time"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:text="13:16 June 04, 2019"
+                           android:layout_marginTop="16dp"/>
+                   </LinearLayout>
+                   <com.example.newsapp.util.NoScrollWebView
+                       android:id="@+id/news_content"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_marginBottom="30dp"/>
+                   <include layout="@layout/like_or_dislike"/>
+                   <include layout="@layout/related_stories"/>
+                   <include layout="@layout/comment"/>
+                   <RelativeLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content">
+                       <LinearLayout
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_centerInParent="true"
+                           android:clickable="true">
+                           <TextView
+                               android:id="@+id/viewAll"
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:text="View all comments"
+                               android:textSize="18sp"
+                               android:textStyle="bold"
+                               android:textColor="@color/colorBlack"
+                               android:clickable="true"/>
+                           <ImageView
+                               android:layout_width="25dp"
+                               android:layout_height="25dp"
+                               android:src="@mipmap/go"/>
+                       </LinearLayout>
+
+                   </RelativeLayout>
+                   <ImageView
+                       android:layout_width="match_parent"
+                       android:layout_height="80dp"
+                       android:background="@color/colorPrimary"/>
+               </LinearLayout>
+
+           </LinearLayout>
+       </ScrollView>
+   </LinearLayout>
+    <LinearLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginHorizontal="16dp">
-        <TextView
-            android:id="@+id/news_title_detail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tony takes you travel around the city"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorBlack"
-            android:layout_marginTop="16dp"/>
-        <TextView
-            android:id="@+id/news_author"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Peggy Lin"
-            android:layout_marginTop="16dp"/>
-        <TextView
-            android:id="@+id/news_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="13:16 June 04, 2019"
-            android:layout_marginTop="16dp"/>
-        <TextView
-            android:id="@+id/news_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary">
+        <include layout="@layout/send_comment"/>
     </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

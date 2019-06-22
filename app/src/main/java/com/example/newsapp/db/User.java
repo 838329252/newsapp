@@ -11,7 +11,10 @@ public class User extends DataSupport {
     private String userAccount;
     private String password;
     private int headPicture;
-    private List<News> newsList=new ArrayList<News>();  //comment 和user是多对一的关系，以后记得改
+    private List<News> newsList=new ArrayList<News>();
+    private List<Comment> commentList=new ArrayList<Comment>();
+    private List<LikeNews> likeNewsList=new ArrayList<LikeNews>();
+    private List<DislikeNews> dislikeNewsList=new ArrayList<DislikeNews>();
 
     public int getId() {
         return id;
@@ -61,4 +64,27 @@ public class User extends DataSupport {
         this.newsList = newsList;
     }
 
+    public List<Comment> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<Comment> commentList) {
+        this.commentList = commentList;
+    }
+
+    public List<LikeNews> getLikeNewsList() {
+        return likeNewsList;
+    }
+
+    public void setLikeNewsList(List<LikeNews> likeNewsList) {
+        this.likeNewsList = likeNewsList;
+    }
+
+    public List<DislikeNews> getDislikeNewsList() {
+        return dislikeNewsList;
+    }
+
+    public void setDislikeNewsList(List<DislikeNews> dislikeNewsList) {
+        this.dislikeNewsList = dislikeNewsList;
+    }
 }

@@ -1,5 +1,7 @@
 package com.example.newsapp.BindItem;
 
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -7,7 +9,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.newsapp.NewsDetailActivity;
 import com.example.newsapp.R;
+import com.example.newsapp.db.Picture;
 
 import java.util.List;
 
@@ -20,12 +24,13 @@ public class BindItemSmall {
     private ImageView pictureSmall;
     private LinearLayout itemBottom;
     private String title;
-    private List pictureList;
+    private List<Picture> pictureList;
     private LinearLayout container;
     private int layoutType;
     private String column;
     private boolean itemBottomVisibility;
-    public BindItemSmall(int layoutType, LinearLayout container, String title, List pictureList, String column,boolean itemBottomVisibility){
+    private int news_id;
+    public BindItemSmall(int layoutType, LinearLayout container, String title, List<Picture> pictureList, String column,boolean itemBottomVisibility,int id){
         view=LayoutInflater.from(getContext()).inflate(layoutType,container,false);
         this.container=container;
         this.title=title;
@@ -33,8 +38,19 @@ public class BindItemSmall {
         this.column=column;
         this.layoutType=layoutType;
         this.itemBottomVisibility=itemBottomVisibility;
+        news_id=id;
         viewHolder();
         addView();
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getContext(),NewsDetailActivity.class);
+                intent.putExtra("news_id",news_id);
+                Log.d("HIHIbind",news_id+"");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(intent);
+            }
+        });
 
     }
     private void viewHolder(){
@@ -45,7 +61,7 @@ public class BindItemSmall {
     }
     private void addView(){
         titleTextView.setText(title);
-        Glide.with(getContext()).load(pictureList.get(0)).into(pictureSmall);
+       /* Glide.with(getContext()).load(pictureList.get(0).getPictureUrl()).into(pictureSmall);*/
         columnTextView.setText(column);
         itemBottom.setVisibility(View.GONE);
         if(itemBottomVisibility==true)

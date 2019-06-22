@@ -12,14 +12,14 @@ public class News extends DataSupport {
     private String author;
     private String content;
     private String time;
-    private List<Integer> pictureList=new ArrayList<Integer>();
     private int layoutType;
     private String column;
-    private int like;
-    private int dislike;
-    private List<Integer> relatedList =new ArrayList<Integer>();
+    private List<Picture> pictureList=new ArrayList<Picture>();
+    private List<Relate> relatedList =new ArrayList<Relate>();
     private List<Comment> commentList = new ArrayList<Comment>();
     private List<User> userList=new ArrayList<User>();
+    private List<LikeNews> likeNewsList=new ArrayList<LikeNews>();
+    private List<DislikeNews> dislikeNewsList=new ArrayList<DislikeNews>();
 
     public int getId() {
         return id;
@@ -35,22 +35,6 @@ public class News extends DataSupport {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public List<Integer> getPictureList() {
-        return pictureList;
-    }
-
-    public void setPictureList(List<Integer> pictureList) {
-        this.pictureList = pictureList;
-    }
-
-    public List<Integer> getRelatedList() {
-        return relatedList;
-    }
-
-    public void setRelatedList(List<Integer> relatedList) {
-        this.relatedList = relatedList;
     }
 
     public String getAuthor() {
@@ -96,22 +80,6 @@ public class News extends DataSupport {
         this.column = column;
     }
 
-    public int getLike() {
-        return like;
-    }
-
-    public void setLike(int like) {
-        this.like = like;
-    }
-
-    public int getDislike() {
-        return dislike;
-    }
-
-    public void setDislike(int dislike) {
-        this.dislike = dislike;
-    }
-
     public List<Comment> getCommentList() {
         return commentList;
     }
@@ -126,5 +94,37 @@ public class News extends DataSupport {
 
     public void setUserList(List<User> userList) {
         this.userList = userList;
+    }
+
+    public List<Picture> getPictureList() {
+        return pictureList;
+    }
+
+    public void setPictureList(List<Picture> pictureList) {
+        this.pictureList = pictureList;
+    }
+
+    public List<Relate> getRelatedList() {
+        return relatedList;
+    }
+
+    public void setRelatedList(List<Relate> relatedList) {
+        this.relatedList = relatedList;
+    }
+
+    public List<LikeNews> getLikeNewsList() {
+        return likeNewsList;
+    }
+
+    public void setLikeNewsList(List<LikeNews> likeNewsList) {
+        this.likeNewsList = likeNewsList;
+    }
+
+    public List<DislikeNews> getDislikeNewsList() {
+        return dislikeNewsList;
+    }
+
+    public void setDislikeNewsList(List<DislikeNews> dislikeNewsList) {
+        this.dislikeNewsList = dislikeNewsList;
     }
 }
