@@ -15,6 +15,7 @@ public class User extends DataSupport {
     private List<Comment> commentList=new ArrayList<Comment>();
     private List<LikeNews> likeNewsList=new ArrayList<LikeNews>();
     private List<DislikeNews> dislikeNewsList=new ArrayList<DislikeNews>();
+    private List<Collect> collectList=new ArrayList<Collect>();
 
     public int getId() {
         return id;

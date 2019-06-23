@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,16 +20,19 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.newsapp.BindItem.ShowNews;
+import com.example.newsapp.NewsDetailActivity;
 import com.example.newsapp.R;
 import com.example.newsapp.SearchActivity;
 import com.example.newsapp.adapter.ScrollAdapter;
 import com.example.newsapp.db.JDBC;
 import com.example.newsapp.db.News;
+import com.example.newsapp.db.Picture;
 import com.example.newsapp.util.Search;
 
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class TopNewsFragment extends Fragment {
@@ -41,18 +45,10 @@ public class TopNewsFragment extends Fragment {
     private TextView textView;
     private LinearLayout ll_dot;
     private TextView fakeSearchView;
-    private int[] imageResIds = {      //图片的数组资源
-            R.drawable.picture_1,
-            R.drawable.picture_2,
-            R.drawable.picture_1,
-            R.drawable.picture_2,
-    };
-    private String[] descs = {           //图片字符串数组资源
-            "Tony takes you travel around the city",
-            "First captive panda cub of the year born in China",
-            "Tony takes you travel around the city",
-            "First captive panda cub of the year born in China",
-    };
+    private List<News> newslist;
+    private int[] imageResIds=new int[4];
+    private String[] descs=new String[4];
+    private int[] newsId=new int[4];
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -69,17 +65,25 @@ public class TopNewsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         view= inflater.inflate(R.layout.fragment_top_news, container, false);
-        /*jdbc.InsertDataToNews("Tony takes you travel around the city","Peggy Lin",
-                "Hello","2019.6.5",R.layout.item_picture_large,
-                "BUSINESS",0,0);*/
         topLinearLayout=(LinearLayout)view.findViewById(R.id.topLinearLayout);
         fakeSearchView=(TextView)view.findViewById(R.id.fake_searchEdit) ;
         topLinearLayout.removeAllViews();
         itemBottomVisibility=true;
-        init();
+
         showNews=new ShowNews("OPINIONS",topLinearLayout,itemBottomVisibility);
+        newslist=showNews.searchNewsInfoForTopNews();
+        int i=0;
+        for(News news:newslist){
+            int news_id=news.getId();
+            newsId[i]=news_id;
+            List<Picture> list=DataSupport.where("news_id=?",news_id+"").find(Picture.class);
+            imageResIds[i]=list.get(0).getPictureUrl();
+            descs[i]=news.getTitle();
+            i++;
+        }
+        init();
         fakeSearchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,11 +101,22 @@ public class TopNewsFragment extends Fragment {
         ll_dot = (LinearLayout) view.findViewById(R.id.ll_dot);
         final ArrayList<ImageView> imageViews = new ArrayList<>();   //一.创建一个imageview集合
         //一.创建一个集合
-        for (int i = 0; i < imageResIds.length; i++) {
+        for (int i=0; i < imageResIds.length; i++) {
             //初始化imageview
             ImageView imageView = new ImageView(getContext());
             //把图片资源添加到imageview对象中去
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setClickable(true);
+            final int news_id=newsId[i];
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent=new Intent(getContext(),NewsDetailActivity.class);
+                    intent.putExtra("news_id",news_id);
+                    startActivity(intent);
+                }
+            });
             Glide.with(getContext()).load(imageResIds[i]).into(imageView);
             //把已经设置好的对象添加到集合中去
             imageViews.add(imageView);
@@ -180,6 +195,16 @@ public class TopNewsFragment extends Fragment {
      {
          //根据viewpager的item,设置相对应的text文本
          textView.setText(descs[position]);
+         final int news_id=newsId[position];
+         textView.setClickable(true);
+         textView.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+                 Intent intent=new Intent(getContext(),NewsDetailActivity.class);
+                 intent.putExtra("news_id",news_id);
+                 startActivity(intent);
+             }
+         });
          //对点进行判断,拿到点的位置判断与position是否一样
          for (int i = 0; i < imageResIds.length; i++)
          {

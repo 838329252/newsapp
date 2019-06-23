@@ -20,6 +20,7 @@ public class News extends DataSupport {
     private List<User> userList=new ArrayList<User>();
     private List<LikeNews> likeNewsList=new ArrayList<LikeNews>();
     private List<DislikeNews> dislikeNewsList=new ArrayList<DislikeNews>();
+    private List<Collect> collectList=new ArrayList<Collect>();
 
     public int getId() {
         return id;

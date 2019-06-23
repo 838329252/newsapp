@@ -3,12 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_marginVertical="8dp">
-    <include layout="@layout/line"/>
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="8dp">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="10dp"
         >
         <ImageView
             android:id="@+id/news_picture_small"
@@ -39,6 +41,6 @@
 
         </LinearLayout>
     </LinearLayout>
-
+    <include layout="@layout/line"/>
 </LinearLayout>
 

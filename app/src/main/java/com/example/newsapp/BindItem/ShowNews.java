@@ -39,10 +39,8 @@ public class ShowNews {
         for (News news : newsList) {
             String title = news.getTitle();
             int id = news.getId();
-            Log.d("HIHIshow", id + "");
             List<Picture> pictureList = new ArrayList<Picture>();
            /* pictureList = jdbc.findPictureByNewsId(id);*/ //这里的bug是怎么肥事呢！！！
-            Log.d("HIHIpicture2", pictureList + "");
             String column = news.getColumn();
             BindItemSmall bindItemSmall = new BindItemSmall(R.layout.item_picture_small, container, title, pictureList, column, itemBottomVisibility, id);
         }
@@ -54,7 +52,6 @@ public class ShowNews {
             int id=news.getId();
             List<Picture> pictureList =new ArrayList<Picture>();
             pictureList=jdbc.findPictureByNewsId(id);
-            Log.d("HIHIpicture",pictureList+"");
             String column=news.getColumn();
             switch(layoutType){
                 case R.layout.item_picture_large:
@@ -73,17 +70,21 @@ public class ShowNews {
             }
         }
     }
-    private List searchNewsInfoForTopNews(){
+    public List searchNewsInfoForTopNews(){
         List<News> templeList=new ArrayList<News>();
         List<News> list=new ArrayList<News>();
         int i=0;
+        int j=0;
         templeList=jdbc.findAll("News");
-        Log.d("Peggy",templeList.size()+"");
-        for(i=0;i<5;i++){
+        boolean[]  bool = new boolean[20];
+        for(i=0;i<4;i++){
             News news=new News();
             Random rand = new Random();
             if(templeList.size()!=0){
-            news=templeList.get(rand.nextInt(templeList.size()));
+                do{j=rand.nextInt(templeList.size());}   //防止出现重复的随机数
+                while(bool[j]);
+                bool[j] = true;
+            news=templeList.get(j);
             list.add(news);}
         }
         return list;

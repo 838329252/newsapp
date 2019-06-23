@@ -3,8 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_marginVertical="8dp">
-    <include layout="@layout/line"/>
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="8dp">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -32,4 +33,5 @@
         <include layout="@layout/title2"/>
         <include layout="@layout/time"/>
     </LinearLayout>
+    <include layout="@layout/line"/>
 </LinearLayout>

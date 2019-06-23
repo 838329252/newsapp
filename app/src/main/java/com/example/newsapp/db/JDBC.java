@@ -50,6 +50,12 @@ public class JDBC extends DataSupport{
         dislikeNews.setUser_id(user_id);
         dislikeNews.save();
     }
+    public void InsertDataToCollect(int news_id,int user_id){
+        Collect collect=new Collect();
+        collect.setNews_id(news_id);
+        collect.setUser_id(user_id);
+        collect.save();
+    }
     public List findNewsByColumnForCover (String column){
         List list=DataSupport.
                 select("id","title","layoutType","column").

@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".NewsDetailActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".LoginActivity">
@@ -23,7 +23,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".CommentAllActivity"></activity>
+        <activity android:name=".CommentAllActivity" />
+        <activity android:name=".MyFavorites" />
+        <activity android:name=".MyComments" />
+        <activity android:name=".Settings"></activity>
     </application>
 
 </manifest>

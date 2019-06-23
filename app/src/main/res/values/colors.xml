@@ -8,4 +8,6 @@
     <color name="colorGray">#b9b8b8</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorDarkGray">#605c5c</color>
+    <color name="colorMiddleGray">#868282</color>
+    <color name="colorForMe">#efebeb</color>
 </resources>

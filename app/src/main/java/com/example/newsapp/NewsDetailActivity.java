@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.example.newsapp.BindItem.ShowComment;
 import com.example.newsapp.BindItem.ShowNews;
+import com.example.newsapp.db.Collect;
 import com.example.newsapp.db.Comment;
 import com.example.newsapp.db.DislikeNews;
 import com.example.newsapp.db.GlobalData;
@@ -69,6 +70,7 @@ public class NewsDetailActivity extends AppCompatActivity {
     private EditText commentEdit;
     private int news_id;
     private int user_id;
+    private ImageButton collect;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,12 +90,18 @@ public class NewsDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);  //不显示toolbar后边的名称
 
         setNewsInfo();
+
         webView=(NoScrollWebView) findViewById(R.id.news_content);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
-        webView.loadUrl("http://daily.zhihu.com/story/9712222?utm_campaign=in_app_share&utm_medium=Android&utm_source=Weixin");
-        //这里记得开启线程
         initWebview();
+        webView.post(new Runnable() {
+            @Override
+            public void run() {
+                webView.loadUrl("http://daily.zhihu.com/story/9712222?utm_campaign=in_app_share&utm_medium=Android&utm_source=Weixin");
+            }
+        });
+
 
         setRelateStories();
         showLatestComment();
@@ -127,6 +135,19 @@ public class NewsDetailActivity extends AppCompatActivity {
         dislike=(RadioButton)findViewById(R.id.dislike);
         judgeLikeOrDislike();
         likeOrdislike();
+
+
+        collect=(ImageButton)findViewById(R.id.collect);
+        int count=DataSupport.where("user_id=? and news_id=?",user_id+"",news_id+"").count(Collect.class);
+        if(count!=0){
+            collect.setImageResource(R.mipmap.colleted);
+        }
+        collect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                collect();
+            }
+        });
     }
     private void initWebview() {
         WebSettings webSettings = webView.getSettings();
@@ -271,5 +292,17 @@ public class NewsDetailActivity extends AppCompatActivity {
         newsTitle.setText(news.getTitle());
         author.setText(news.getAuthor());
         newsTime.setText(news.getTime());
+    }
+    private void collect(){
+        int count=DataSupport.where("user_id=? and news_id=?",user_id+"",news_id+"").count(Collect.class);
+        if(count!=0){
+            DataSupport.deleteAll(Collect.class,"user_id=? and news_id=?",user_id+"",news_id+"");
+            collect.setImageResource(R.mipmap.collect);
+
+        }else {
+             collect.setImageResource(R.mipmap.colleted);
+             jdbc.InsertDataToCollect(news_id, user_id);
+
+        }
     }
 }
