@@ -1,7 +1,13 @@
 package com.example.newsapp.BindItem;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +15,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.newsapp.NewsDetailActivity;
 import com.example.newsapp.R;
+import com.example.newsapp.Settings;
 import com.example.newsapp.db.Comment;
+import com.example.newsapp.db.GlobalData;
 import com.example.newsapp.db.News;
 import com.example.newsapp.db.User;
 
@@ -65,8 +74,14 @@ public class ShowComment {
             List<User> list=DataSupport.where("id=?",user_id+"").find(User.class);
             User user=list.get(0);
             String name=user.getUsername();
-            int headUrl=user.getHeadPicture();
-            head.setImageResource(headUrl);
+            user=DataSupport.where("id=?",user_id+"").findFirst(User.class);
+            if(user.getHeadPicture()==null){
+                Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.mipmap.head);
+                head.setImageBitmap(bitmap);
+            }else{
+                Bitmap bitmap=BitmapFactory.decodeFile(user.getHeadPicture());
+                head.setImageBitmap(bitmap);
+            }
             username.setText(name);
             commentContent.setText(content);
             commentTime.setText(time);
@@ -86,6 +101,5 @@ public class ShowComment {
             }
             container.addView(view);
     }
-
 }
 

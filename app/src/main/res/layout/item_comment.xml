@@ -8,11 +8,12 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="10dp"
         android:layout_marginHorizontal="5dp">
-        <ImageView
+        <com.example.newsapp.util.CircleImageView
             android:id="@+id/head"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/head"/>
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@mipmap/head"
+            android:scaleType="centerCrop" />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

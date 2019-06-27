@@ -35,15 +35,16 @@ public class MyFavorites extends AppCompatActivity {
             }
         });
         list=DataSupport.where("user_id=?",GlobalData.getUserId()+"").find(Collect.class);
-
-        for(Collect collect:list){
-
-            News news=DataSupport.where("id=?",collect.getNews_id()+"").findFirst(News.class);
-            newsList.add(news);
-        }
+        Log.d("collecList",list+"");
         container=(LinearLayout)findViewById(R.id.myFavorites);
         container.removeAllViews();
-        itemBottomVisibility=true;
-        ShowNews showNews=new ShowNews(container,itemBottomVisibility,newsList);
+        if(list.size()!=0){
+            for(Collect collect:list){
+                News news=DataSupport.where("id=?",collect.getNews_id()+"").findFirst(News.class);
+                newsList.add(news);
+                itemBottomVisibility=true;
+            }
+            ShowNews showNews=new ShowNews(container,itemBottomVisibility,newsList);
+        }
     }
 }

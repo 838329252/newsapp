@@ -10,21 +10,43 @@
         android:orientation="vertical"
         android:paddingVertical="30dp"
         android:background="@color/colorPrimary">
-        <ImageView
+        <com.example.newsapp.util.CircleImageView
             android:id="@+id/userHead"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:src="@mipmap/head"
+            android:scaleType="centerCrop"
             android:layout_gravity="center_horizontal" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Account："
+                android:textColor="@color/colorGray"
+                android:textSize="15sp"/>
+            <TextView
+                android:id="@+id/accountForMe"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="123"
+                android:textColor="@color/colorGray"
+                android:textSize="15sp"/>
+        </LinearLayout>
+
         <TextView
-            android:layout_marginTop="30dp"
+            android:id="@+id/usernameForMe"
+            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="用户名"
             android:textColor="@color/colorBlack"
             android:layout_gravity="center_horizontal"
             android:textSize="18sp"/>
-
 
     </LinearLayout>
     <LinearLayout

@@ -1,5 +1,7 @@
 package com.example.newsapp.db;
 
+import android.util.Log;
+
 import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
 
@@ -30,7 +32,7 @@ public class JDBC extends DataSupport{
         comment.setTime(time);
         comment.save();
     }
-    public void InsertDataToUser(String username,String userAccount,String password,int headPicture){
+    public void InsertDataToUser(String username,String userAccount,String password,String headPicture){
         User user=new User();
         user.setUsername(username);
         user.setUserAccount(userAccount);
@@ -55,6 +57,9 @@ public class JDBC extends DataSupport{
         collect.setNews_id(news_id);
         collect.setUser_id(user_id);
         collect.save();
+    }
+    public void InsertDataToPicture(int news_id,int picture_id){
+
     }
     public List findNewsByColumnForCover (String column){
         List list=DataSupport.
@@ -111,7 +116,7 @@ public class JDBC extends DataSupport{
         }
     }
     public List findLatestComment(int news_id){
-        List list=DataSupport.where("news_id=?",news_id+"")
+        List list=DataSupport.where("news_id=? ",news_id+"")
                         .order("id desc")
                         .limit(3)
                         .find(Comment.class);

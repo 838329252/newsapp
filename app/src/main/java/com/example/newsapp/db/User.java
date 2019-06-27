@@ -10,7 +10,7 @@ public class User extends DataSupport {
     private String username;
     private String userAccount;
     private String password;
-    private int headPicture;
+    private String headPicture;
     private List<News> newsList=new ArrayList<News>();
     private List<Comment> commentList=new ArrayList<Comment>();
     private List<LikeNews> likeNewsList=new ArrayList<LikeNews>();
@@ -49,11 +49,11 @@ public class User extends DataSupport {
         this.password = password;
     }
 
-    public int getHeadPicture() {
+    public String getHeadPicture() {
         return headPicture;
     }
 
-    public void setHeadPicture(int headPicture) {
+    public void setHeadPicture(String headPicture) {
         this.headPicture = headPicture;
     }
 
@@ -87,5 +87,13 @@ public class User extends DataSupport {
 
     public void setDislikeNewsList(List<DislikeNews> dislikeNewsList) {
         this.dislikeNewsList = dislikeNewsList;
+    }
+
+    public List<Collect> getCollectList() {
+        return collectList;
+    }
+
+    public void setCollectList(List<Collect> collectList) {
+        this.collectList = collectList;
     }
 }

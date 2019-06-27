@@ -16,33 +16,41 @@ public class ShowNews {
     private String column;
     private LinearLayout container;
     private List<News> newsList;
-    private JDBC jdbc;
+    private JDBC jdbc=new JDBC();
     private boolean itemBottomVisibility;
     public ShowNews(String column, LinearLayout container,boolean itemBottomVisibility){
         this.column=column;
         this.container=container;
-        jdbc=new JDBC();
         this.newsList=jdbc.findNewsByColumnForCover(column);
         this.itemBottomVisibility=itemBottomVisibility;
         if (itemBottomVisibility==true){
             this.newsList=searchNewsInfoForTopNews();
         }
-        showNewsInfo();
+        if(newsList.size()!=0){
+            showNewsInfo();
+        }
+
     }
     public ShowNews( LinearLayout container,boolean itemBottomVisibility,List<News> newsList) {
         this.container = container;
         this.newsList = newsList;
         this.itemBottomVisibility=itemBottomVisibility;
-        showRelateNewsInfo();
+        if (newsList.size()!=0){
+            showRelateNewsInfo();
+        }
+
     }
     private void showRelateNewsInfo() {
         for (News news : newsList) {
             String title = news.getTitle();
             int id = news.getId();
             List<Picture> pictureList = new ArrayList<Picture>();
-           /* pictureList = jdbc.findPictureByNewsId(id);*/ //这里的bug是怎么肥事呢！！！
+            pictureList = jdbc.findPictureByNewsId(id);//这里的bug是怎么肥事呢！！！
             String column = news.getColumn();
-            BindItemSmall bindItemSmall = new BindItemSmall(R.layout.item_picture_small, container, title, pictureList, column, itemBottomVisibility, id);
+            if(pictureList.size()!=0){
+                BindItemSmall bindItemSmall = new BindItemSmall(R.layout.item_picture_small, container, title, pictureList, column, itemBottomVisibility, id);
+            }
+
         }
     }
     private void showNewsInfo(){
@@ -53,21 +61,24 @@ public class ShowNews {
             List<Picture> pictureList =new ArrayList<Picture>();
             pictureList=jdbc.findPictureByNewsId(id);
             String column=news.getColumn();
-            switch(layoutType){
-                case R.layout.item_picture_large:
-                    BindItemLarge bindItemLarge=new BindItemLarge(layoutType,container,title,pictureList,column,itemBottomVisibility,id);
-                    break;
-                case R.layout.item_picture_small:
-                    BindItemSmall bindItemSmall=new BindItemSmall(layoutType,container,title,pictureList,column,itemBottomVisibility,id);
-                    break;
-                case R.layout.item_picture_three:
-                    BindItemThree bindItemThree=new BindItemThree(layoutType,container,title,pictureList,column,itemBottomVisibility,id);
-                    break;
-                case R.layout.item_picture_two:
-                    BindItemTwo bindItemTwo=new BindItemTwo(layoutType,container,title,pictureList,column,itemBottomVisibility,id);
-                    break;
+            if(pictureList.size()!=0){
+                switch(layoutType){
+                    case R.layout.item_picture_large:
+                        BindItemLarge bindItemLarge=new BindItemLarge(layoutType,container,title,pictureList,column,itemBottomVisibility,id);
+                        break;
+                    case R.layout.item_picture_small:
+                        BindItemSmall bindItemSmall=new BindItemSmall(layoutType,container,title,pictureList,column,itemBottomVisibility,id);
+                        break;
+                    case R.layout.item_picture_three:
+                        BindItemThree bindItemThree=new BindItemThree(layoutType,container,title,pictureList,column,itemBottomVisibility,id);
+                        break;
+                    case R.layout.item_picture_two:
+                        BindItemTwo bindItemTwo=new BindItemTwo(layoutType,container,title,pictureList,column,itemBottomVisibility,id);
+                        break;
 
+                }
             }
+
         }
     }
     public List searchNewsInfoForTopNews(){

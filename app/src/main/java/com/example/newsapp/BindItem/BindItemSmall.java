@@ -61,7 +61,7 @@ public class BindItemSmall {
     }
     private void addView(){
         titleTextView.setText(title);
-       /* Glide.with(getContext()).load(pictureList.get(0).getPictureUrl()).into(pictureSmall);*/
+       Glide.with(getContext()).load(pictureList.get(0).getPictureUrl()).into(pictureSmall);
         columnTextView.setText(column);
         itemBottom.setVisibility(View.GONE);
         if(itemBottomVisibility==true)

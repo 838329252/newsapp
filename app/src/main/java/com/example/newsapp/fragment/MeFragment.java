@@ -3,23 +3,36 @@ package com.example.newsapp.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.newsapp.MyComments;
 import com.example.newsapp.MyFavorites;
 import com.example.newsapp.R;
 import com.example.newsapp.Settings;
+import com.example.newsapp.db.GlobalData;
+import com.example.newsapp.db.User;
+
+import org.litepal.crud.DataSupport;
 
 public class MeFragment extends Fragment implements View.OnClickListener{
     private LinearLayout myFavorites;
     private LinearLayout myComments;
     private LinearLayout mySetting;
+    private ImageView userHead;
+    private TextView account;
+    private TextView username;
     private Intent intent;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,6 +42,19 @@ public class MeFragment extends Fragment implements View.OnClickListener{
         myFavorites=(LinearLayout)view.findViewById(R.id.my_favorites);
         myComments=(LinearLayout)view.findViewById(R.id.my_comments);
         mySetting=(LinearLayout)view.findViewById(R.id.my_setting);
+        userHead=(ImageView)view.findViewById(R.id.userHead);
+        username=(TextView)view.findViewById(R.id.usernameForMe);
+        account=(TextView)view.findViewById(R.id.accountForMe);
+        User user=DataSupport.where("id=?",GlobalData.getUserId()+"").findFirst(User.class);
+        if(user.getHeadPicture()==null){
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.head);
+            userHead.setImageBitmap(bitmap);
+        }else{
+            Bitmap bitmap=BitmapFactory.decodeFile(user.getHeadPicture());
+            userHead.setImageBitmap(bitmap);
+        }
+        username.setText(user.getUsername());
+        account.setText(user.getUserAccount());
         myFavorites.setOnClickListener(this);
         myComments.setOnClickListener(this);
         mySetting.setOnClickListener(this);

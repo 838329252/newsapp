@@ -75,15 +75,27 @@ public class TopNewsFragment extends Fragment {
         showNews=new ShowNews("OPINIONS",topLinearLayout,itemBottomVisibility);
         newslist=showNews.searchNewsInfoForTopNews();
         int i=0;
-        for(News news:newslist){
-            int news_id=news.getId();
-            newsId[i]=news_id;
-            List<Picture> list=DataSupport.where("news_id=?",news_id+"").find(Picture.class);
-            imageResIds[i]=list.get(0).getPictureUrl();
-            descs[i]=news.getTitle();
-            i++;
+        if(newslist.size()!=0){
+            for(News news:newslist){
+                int news_id=news.getId();
+                newsId[i]=news_id;
+                List<Picture> list=DataSupport.where("news_id=?",news_id+"").find(Picture.class);
+                if (list.size()!=0){
+                    imageResIds[i]=list.get(0).getPictureUrl();
+                }else imageResIds[i]=R.drawable.picture_3;
+                descs[i]=news.getTitle();
+                i++;
+            }
+            init();
+        }else{
+            for(i=0;i<4;i++){
+                newsId[i]=i;
+                imageResIds[i]=R.drawable.picture_3;
+                descs[i]=i+"";
+            }
         }
-        init();
+
+
         fakeSearchView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

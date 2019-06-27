@@ -36,8 +36,11 @@ public class MyComments extends AppCompatActivity {
         container=(LinearLayout)findViewById(R.id.myComments) ;
         container.removeAllViews();
         list=DataSupport.where("user_id=?",GlobalData.getUserId()+"").find(Comment.class);
-        for(Comment comment:list){
-            ShowComment showComment=new ShowComment(container,comment);
+        if(list.size()!=0){
+            for(Comment comment:list){
+                ShowComment showComment=new ShowComment(container,comment);
+            }
         }
+
     }
 }

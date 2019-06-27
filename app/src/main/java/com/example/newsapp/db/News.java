@@ -128,4 +128,12 @@ public class News extends DataSupport {
     public void setDislikeNewsList(List<DislikeNews> dislikeNewsList) {
         this.dislikeNewsList = dislikeNewsList;
     }
+
+    public List<Collect> getCollectList() {
+        return collectList;
+    }
+
+    public void setCollectList(List<Collect> collectList) {
+        this.collectList = collectList;
+    }
 }

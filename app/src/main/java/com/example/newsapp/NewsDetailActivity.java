@@ -259,7 +259,6 @@ public class NewsDetailActivity extends AppCompatActivity {
             News news=templelist.get(0);
             newslist.add(news);}
         }
-  /*      Log.d("HIHInewslist",newslist+"");*/
         relatedStories.removeAllViews();
         showNews=new ShowNews(relatedStories,true,newslist);
     }
@@ -268,9 +267,12 @@ public class NewsDetailActivity extends AppCompatActivity {
         List<Comment> list=jdbc.findLatestComment(news_id);
         LinearLayout commentStories=(LinearLayout)findViewById(R.id.latestComment);
         commentStories.removeAllViews();
-        for(Comment comment:list){
-            ShowComment showComment=new ShowComment(comment,commentStories);
+        if(list.size()!=0){
+            for(Comment comment:list){
+                ShowComment showComment=new ShowComment(comment,commentStories);
+            }
         }
+
     }
     private void sendComment(){
         commentEdit=(EditText)findViewById(R.id.comment_edit);
@@ -288,10 +290,13 @@ public class NewsDetailActivity extends AppCompatActivity {
         TextView author=(TextView)findViewById(R.id.news_author);
         TextView newsTime=(TextView)findViewById(R.id.news_time);
         List<News> newslist=DataSupport.where("id=?",news_id+"").find(News.class);
-        News news=newslist.get(0);
-        newsTitle.setText(news.getTitle());
-        author.setText(news.getAuthor());
-        newsTime.setText(news.getTime());
+        if (newslist.size()!=0){
+            News news=newslist.get(0);
+            newsTitle.setText(news.getTitle());
+            author.setText(news.getAuthor());
+            newsTime.setText(news.getTime());
+        }
+
     }
     private void collect(){
         int count=DataSupport.where("user_id=? and news_id=?",user_id+"",news_id+"").count(Collect.class);

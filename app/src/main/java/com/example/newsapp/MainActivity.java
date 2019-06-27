@@ -11,6 +11,7 @@ import com.example.newsapp.db.News;
 import com.example.newsapp.fragment.BusinessFragment;
 import com.example.newsapp.fragment.MeFragment;
 import com.example.newsapp.fragment.TabFragment;
+import com.example.newsapp.util.HttpUtil;
 
 import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private String[] mTabNames;
     private List<Fragment> fragments;
     private TabPageAdapter pageAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,5 +57,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+
     }
+
 }

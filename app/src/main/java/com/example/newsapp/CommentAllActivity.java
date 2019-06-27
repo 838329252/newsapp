@@ -32,8 +32,11 @@ public class CommentAllActivity extends AppCompatActivity {
         List<Comment> list=jdbc.findCommentBynewsId(news_id);
         LinearLayout commentStories=(LinearLayout)findViewById(R.id.all_comment);
         commentStories.removeAllViews();
-        for(Comment comment:list){
-            ShowComment showComment=new ShowComment(comment,commentStories);
+        if(list.size()!=0){
+            for(Comment comment:list){
+                ShowComment showComment=new ShowComment(comment,commentStories);
+            }
         }
+
     }
 }
