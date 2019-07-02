@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import com.example.newsapp.BindItem.ShowComment;
 import com.example.newsapp.db.Comment;
 import com.example.newsapp.db.GlobalData;
+import com.example.newsapp.util.HttpUtil;
 
 import org.litepal.crud.DataSupport;
 
@@ -21,11 +22,13 @@ public class MyComments extends AppCompatActivity {
     private LinearLayout container;
     private Toolbar toolbar;
     private List<Comment> list;
+    private HttpUtil httpUtil=new HttpUtil();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_comments);
+        DataSupport.deleteAll(Comment.class);
         toolbar=(android.support.v7.widget.Toolbar)findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,12 +38,25 @@ public class MyComments extends AppCompatActivity {
         });
         container=(LinearLayout)findViewById(R.id.myComments) ;
         container.removeAllViews();
-        list=DataSupport.where("user_id=?",GlobalData.getUserId()+"").find(Comment.class);
-        if(list.size()!=0){
-            for(Comment comment:list){
-                ShowComment showComment=new ShowComment(container,comment);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                httpUtil.sendOkHttpForMy(GlobalData.getUserId(),"comment");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        list=DataSupport.where("user_id=?",GlobalData.getUserId()+"").find(Comment.class);
+                        if(list.size()!=0){
+                            for(Comment comment:list){
+                                ShowComment showComment=new ShowComment(container,comment);
+                            }
+                        }
+                    }
+                });
             }
-        }
+        }).start();
+
+
 
     }
 }

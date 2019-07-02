@@ -23,6 +23,8 @@ import com.example.newsapp.db.Comment;
 import com.example.newsapp.db.GlobalData;
 import com.example.newsapp.db.News;
 import com.example.newsapp.db.User;
+import com.example.newsapp.util.HandleJSON;
+import com.example.newsapp.util.HttpUtil;
 
 import org.litepal.crud.DataSupport;
 
@@ -42,6 +44,8 @@ public class ShowComment {
     private Comment comment;
     private TextView titleForComments;
     private int  viewId;
+    private int user_id;
+    private HttpUtil httpUtil=new HttpUtil();
     public ShowComment(Comment comment,LinearLayout container){
         view=LayoutInflater.from(getContext()).inflate(R.layout.item_comment,container,false);
         this.viewId=R.layout.item_comment;
@@ -70,12 +74,20 @@ public class ShowComment {
     public void addView(){
             String content=comment.getContent();
             String time=comment.getTime();
-            int user_id=comment.getUser_id();
-            List<User> list=DataSupport.where("id=?",user_id+"").find(User.class);
+            user_id=comment.getUser_id();
+            List<User> list=DataSupport.where("user_id=?",user_id+"").find(User.class);
+            if(list.size()==0){
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        httpUtil.sendOkHttpForMy(user_id,"user");
+                    }
+                }).start();
+            }
             User user=list.get(0);
             String name=user.getUsername();
-            user=DataSupport.where("id=?",user_id+"").findFirst(User.class);
-            if(user.getHeadPicture()==null){
+            user=DataSupport.where("user_id=?",user_id+"").findFirst(User.class);
+            if(user.getHeadPicture().equals("")){
                 Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.mipmap.head);
                 head.setImageBitmap(bitmap);
             }else{
@@ -87,7 +99,7 @@ public class ShowComment {
             commentTime.setText(time);
             if(viewId==R.layout.item_comment_two) {
                 final int news_id = comment.getNews_id();
-                News news = DataSupport.where("id=?", news_id + "").findFirst(News.class);
+                News news = DataSupport.where("news_id=?", news_id + "").findFirst(News.class);
                 titleForComments.setText(news.getTitle());
                 titleForComments.setOnClickListener(new View.OnClickListener() {
                     @Override

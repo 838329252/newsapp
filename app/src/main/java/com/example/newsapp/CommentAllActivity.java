@@ -10,11 +10,13 @@ import android.support.v7.widget.Toolbar;
 import com.example.newsapp.BindItem.ShowComment;
 import com.example.newsapp.db.Comment;
 import com.example.newsapp.db.JDBC;
+import com.example.newsapp.util.HttpUtil;
 
 import java.util.List;
 
 public class CommentAllActivity extends AppCompatActivity {
     private Toolbar toolbar;
+    private HttpUtil httpUtil=new HttpUtil();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

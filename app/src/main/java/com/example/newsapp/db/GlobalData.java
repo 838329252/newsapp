@@ -16,8 +16,12 @@ public class GlobalData extends DataSupport {
     private static String userAccount;
     public static int getUserId() {
         List<User> list=DataSupport.where("userAccount=?",userAccount).find(User.class);
-        int user_id=list.get(0).getId();
+        int user_id=list.get(0).getUser_id();
         return user_id;
+    }
+
+    public static String getUserAccount() {
+        return userAccount;
     }
 
     public static void setUserAccount(String userAccount) {

@@ -63,15 +63,15 @@ public class JDBC extends DataSupport{
     }
     public List findNewsByColumnForCover (String column){
         List list=DataSupport.
-                select("id","title","layoutType","column").
+                select("news_id","title","layoutType","column").
                 where("column=?",column).
                 find(News.class);
         return list;
     }
     public List findNewsById (int id){
         List list=DataSupport.
-                select("id","title","column").
-                where("id=?",id+"").
+                select("news_id","title","column").
+                where("news_id=?",id+"").
                 find(News.class);
         return list;
     }
@@ -101,19 +101,17 @@ public class JDBC extends DataSupport{
         }
         return list;
     }
-    public void deleteAll(String className){
-        switch (className){
-            case "News":
-                DataSupport.deleteAll(News.class);break;
-            case "Comment":
-                DataSupport.deleteAll(Comment.class);break;
-            case "User":
-                DataSupport.deleteAll(User.class);break;
-            case "Relate":
-                DataSupport.deleteAll(Relate.class);break;
-            case "Picture":
-                DataSupport.deleteAll(Picture.class);break;
-        }
+    public static void deleteAll(){
+
+        DataSupport.deleteAll(News.class);
+        DataSupport.deleteAll(Comment.class);
+        DataSupport.deleteAll(LikeNews.class);
+        DataSupport.deleteAll(DislikeNews.class);
+        DataSupport.deleteAll(LikeNews.class);
+        DataSupport.deleteAll(Relate.class);
+        DataSupport.deleteAll(Picture.class);
+        DataSupport.deleteAll(Collect.class);
+        DataSupport.deleteAll(User.class);
     }
     public List findLatestComment(int news_id){
         List list=DataSupport.where("news_id=? ",news_id+"")

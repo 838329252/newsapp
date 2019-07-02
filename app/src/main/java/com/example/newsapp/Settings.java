@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.newsapp.db.GlobalData;
 import com.example.newsapp.db.User;
+import com.example.newsapp.util.HttpUtil;
 
 import org.litepal.crud.DataSupport;
 import org.w3c.dom.Text;
@@ -63,6 +64,9 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private Button cancleChageName;
     private Button cancleChangePass;
     private TextView lotout;
+    private  String imagePath;
+    private String new_pass;
+    private HttpUtil httpUtil=new HttpUtil();
     private static final int CHOOSE_PHOTO = 2;
     private static final int CROP_REQUEST_CODE = 3;
 
@@ -80,8 +84,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 finish();
             }
         });
-        User user = DataSupport.where("id=?", GlobalData.getUserId() + "").findFirst(User.class);
-        if(user.getHeadPicture()==null){
+        User user = DataSupport.where("user_id=?", GlobalData.getUserId() + "").findFirst(User.class);
+        if(user.getHeadPicture().equals("")){
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.head);
             head.setImageBitmap(bitmap);
         }else{
@@ -137,9 +141,20 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                         username.setText(getNewUsername.getText().toString());
                         User user = new User();
                         user.setUsername(getNewUsername.getText().toString());
-                        user.updateAll("id=?", GlobalData.getUserId() + "");
-                        getNewUsername.setText("");
+                        user.updateAll("user_id=?", GlobalData.getUserId() + "");
                         changeUsername.setVisibility(View.GONE);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                httpUtil.sendOkHttpToChangeUsername(GlobalData.getUserId(),getNewUsername.getText().toString());
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        getNewUsername.setText("");
+                                    }
+                                });
+                            }
+                        }).start();
                     }
                 });
                 cancleChageName.setOnClickListener(new View.OnClickListener() {
@@ -158,16 +173,27 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     public void onClick(View v) {
                         int id = GlobalData.getUserId();
                         String old_pass = oldPassword.getText().toString();
-                        String new_pass = newPassword.getText().toString();
-                        User user = DataSupport.where("id=?", id + "").findFirst(User.class);
+                        new_pass = newPassword.getText().toString();
+                        User user = DataSupport.where("user_id=?", id + "").findFirst(User.class);
                         if (user.getPassword().equals(old_pass)) {
                             User user1 = new User();
                             user1.setPassword(new_pass);
-                            user1.updateAll("id=?", id + "");
+                            user1.updateAll("user_id=?", id + "");
                             oldPassword.setText("");
-                            newPassword.setText("");
                             changePassword.setVisibility(View.GONE);
                             Toast.makeText(Settings.this, "密码修改成功", Toast.LENGTH_SHORT).show();
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    httpUtil.sendOkHttpToChangePassword(GlobalData.getUserId(),new_pass);
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            newPassword.setText("");
+                                        }
+                                    });
+                                }
+                            }).start();
                         } else {
                             Toast.makeText(Settings.this, "原密码不正确，请重新输入", Toast.LENGTH_SHORT).show();
                             oldPassword.setText("");
@@ -230,7 +256,7 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
 
     @TargetApi(19)
     private void handleImageOnKitKat(Intent data) {
-        String imagePath = null;
+        imagePath = null;
         Uri uri = data.getData();
         if (DocumentsContract.isDocumentUri(this, uri)) {
             String docId = DocumentsContract.getDocumentId(uri);
@@ -249,14 +275,26 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         }
         User user = new User();
         user.setHeadPicture(imagePath);
-        user.updateAll("id=?", GlobalData.getUserId() + "");
+        user.updateAll("user_id=?", GlobalData.getUserId() + "");
         displayImage(imagePath);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                httpUtil.sendOkHttpToChangeHead( GlobalData.getUserId(),imagePath);
+            }
+        }).start();
     }
 
     private void handleImageBeforekitKat(Intent intent) {
         Uri uri = intent.getData();
-        String imagePath = getImagePath(uri, null);
+        imagePath = getImagePath(uri, null);
         displayImage(imagePath);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                httpUtil.sendOkHttpToChangeHead( GlobalData.getUserId(),imagePath);
+            }
+        }).start();
     }
 
     private String getImagePath(Uri uri, String selection) {

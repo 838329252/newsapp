@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.newsapp.db.GlobalData;
 import com.example.newsapp.db.JDBC;
 import com.example.newsapp.db.User;
+import com.example.newsapp.util.HttpUtil;
 
 import org.litepal.crud.DataSupport;
 
@@ -28,10 +29,14 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText userAccountEdit;
     private EditText passwordEdit;
     private TextView toLogin;
+    private HttpUtil httpUtil;
+    private String response;
+    private JDBC jdbc=new JDBC();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        httpUtil=new HttpUtil();
         userAccountEdit=(EditText)findViewById(R.id.userAccount);
         passwordEdit=(EditText)findViewById(R.id.password);
         toLogin=(TextView)findViewById(R.id.toLogin);
@@ -41,16 +46,25 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 userAccount=userAccountEdit.getText().toString();
                 password=passwordEdit.getText().toString();
-                List list=DataSupport.where("userAccount=? and password=?",userAccount,password).find(User.class);
-                if(list.size()==0){
-                    JDBC jdbc=new JDBC();
-                    jdbc.InsertDataToUser("新用户",userAccount,password,null);
-                    GlobalData.setUserAccount(userAccount);
-                Intent intent=new Intent(RegisterActivity.this,MainActivity.class);
-                startActivity(intent);
-                }else{
-                    Toast.makeText(RegisterActivity.this,"该账号已注册,请直接登录",Toast.LENGTH_SHORT).show();
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        response=httpUtil.sendOkHttpForRegister(userAccount,password);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(response.equals("error")){
+                                    Toast.makeText(RegisterActivity.this,"该账号已注册,请直接登录!",Toast.LENGTH_SHORT).show();
+                                }else {
+                                        GlobalData.setUserAccount(userAccount);
+                                        Intent intent=new Intent(RegisterActivity.this,MainActivity.class);
+                                        startActivity(intent);
+                                }
+                            }
+                        });
+                    }
+                }).start();
+
             }
         });
         toLogin.setOnClickListener(new View.OnClickListener() {

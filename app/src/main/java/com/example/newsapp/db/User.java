@@ -7,6 +7,7 @@ import java.util.List;
 
 public class User extends DataSupport {
     private int id;
+    private int user_id;
     private String username;
     private String userAccount;
     private String password;
@@ -16,6 +17,14 @@ public class User extends DataSupport {
     private List<LikeNews> likeNewsList=new ArrayList<LikeNews>();
     private List<DislikeNews> dislikeNewsList=new ArrayList<DislikeNews>();
     private List<Collect> collectList=new ArrayList<Collect>();
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
 
     public int getId() {
         return id;

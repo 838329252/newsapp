@@ -8,6 +8,7 @@ import java.util.List;
 
 public class News extends DataSupport {
     private int id;
+    private int news_id;
     private String title;
     private String author;
     private String content;
@@ -135,5 +136,13 @@ public class News extends DataSupport {
 
     public void setCollectList(List<Collect> collectList) {
         this.collectList = collectList;
+    }
+
+    public int getNews_id() {
+        return news_id;
+    }
+
+    public void setNews_id(int news_id) {
+        this.news_id = news_id;
     }
 }

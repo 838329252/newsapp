@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.example.newsapp.R;
 import com.example.newsapp.Settings;
 import com.example.newsapp.db.GlobalData;
 import com.example.newsapp.db.User;
+import com.example.newsapp.util.HttpUtil;
 
 import org.litepal.crud.DataSupport;
 
@@ -45,8 +47,19 @@ public class MeFragment extends Fragment implements View.OnClickListener{
         userHead=(ImageView)view.findViewById(R.id.userHead);
         username=(TextView)view.findViewById(R.id.usernameForMe);
         account=(TextView)view.findViewById(R.id.accountForMe);
-        User user=DataSupport.where("id=?",GlobalData.getUserId()+"").findFirst(User.class);
-        if(user.getHeadPicture()==null){
+
+        myFavorites.setOnClickListener(this);
+        myComments.setOnClickListener(this);
+        mySetting.setOnClickListener(this);
+        return view;
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        User user=DataSupport.where("user_id=?",GlobalData.getUserId()+"").findFirst(User.class);
+        if(user.getHeadPicture().equals("")){
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.head);
             userHead.setImageBitmap(bitmap);
         }else{
@@ -55,12 +68,10 @@ public class MeFragment extends Fragment implements View.OnClickListener{
         }
         username.setText(user.getUsername());
         account.setText(user.getUserAccount());
-        myFavorites.setOnClickListener(this);
-        myComments.setOnClickListener(this);
-        mySetting.setOnClickListener(this);
-        return view;
-
     }
+
+    @Override
+
     public void onClick(View v){
         switch(v.getId()){
             case R.id.my_favorites:

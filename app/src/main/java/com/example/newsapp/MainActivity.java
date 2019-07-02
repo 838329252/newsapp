@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import com.example.newsapp.adapter.TabPageAdapter;
+import com.example.newsapp.db.GlobalData;
 import com.example.newsapp.db.News;
 import com.example.newsapp.fragment.BusinessFragment;
 import com.example.newsapp.fragment.MeFragment;
@@ -26,10 +27,12 @@ public class MainActivity extends AppCompatActivity {
     private List<Fragment> fragments;
     private TabPageAdapter pageAdapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mTabLayout = (TabLayout) findViewById(R.id.bottomTabLayout);
         mViewPager = (ViewPager) findViewById(R.id.middle_viewPager_forBottom);
         fragments=new ArrayList<>();

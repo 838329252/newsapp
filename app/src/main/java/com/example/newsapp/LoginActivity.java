@@ -17,16 +17,15 @@ import com.bumptech.glide.Glide;
 import com.example.newsapp.db.GlobalData;
 import com.example.newsapp.db.JDBC;
 import com.example.newsapp.db.User;
-import com.example.newsapp.util.HandleJSON;
+
 import com.example.newsapp.util.HttpUtil;
 
 import org.litepal.crud.DataSupport;
 
 import java.util.List;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import static org.litepal.LitePalApplication.getContext;
+
 
 public class LoginActivity extends AppCompatActivity {
     private String userAccount;
@@ -36,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEdit;
     private TextView toRegister;
     private String responseData;
+    private HttpUtil httpUtil;
+    private int count;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -45,21 +46,38 @@ public class LoginActivity extends AppCompatActivity {
         passwordEdit=(EditText)findViewById(R.id.password);
         toRegister=(TextView)findViewById(R.id.toRegister);
         loginButton=(Button)findViewById(R.id.login_button);
+        httpUtil=new HttpUtil();
+        JDBC.deleteAll();
+        httpUtil.sendOkHttpRequest("all");
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 userAccount=userAccountEdit.getText().toString();
                 password=passwordEdit.getText().toString();
-                List list=DataSupport.where("userAccount=? and password=?",userAccount,password).find(User.class);
-                if(list.size()==0){
-                    Toast.makeText(LoginActivity.this,"账号或密码错误",Toast.LENGTH_SHORT).show();
-                }else {
-                    GlobalData.setUserAccount(userAccount);
-                    Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                    startActivity(intent);
-                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        count=httpUtil.sendOkHttpForLogin(userAccount,password);
+                        runOnUiThread(new Runnable(){
+
+                            @Override
+                            public void run() {
+                                //更新UI
+                                if(count==0){
+                                    Toast.makeText(getContext(),"账号或密码错误",Toast.LENGTH_SHORT).show();
+                                }else {
+                                    GlobalData.setUserAccount(userAccount);
+                                   Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                                   startActivity(intent);
+                                }
+                            }
+
+                        });
+                    }
+                }).start();
 
             }
+
         });
        toRegister.setOnClickListener(new View.OnClickListener() {
            @Override

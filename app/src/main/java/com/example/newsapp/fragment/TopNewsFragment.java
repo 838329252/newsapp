@@ -77,7 +77,7 @@ public class TopNewsFragment extends Fragment {
         int i=0;
         if(newslist.size()!=0){
             for(News news:newslist){
-                int news_id=news.getId();
+                int news_id=news.getNews_id();
                 newsId[i]=news_id;
                 List<Picture> list=DataSupport.where("news_id=?",news_id+"").find(Picture.class);
                 if (list.size()!=0){

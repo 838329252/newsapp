@@ -43,7 +43,7 @@ public class ShowNews {
     private void showRelateNewsInfo() {
         for (News news : newsList) {
             String title = news.getTitle();
-            int id = news.getId();
+            int id = news.getNews_id();
             List<Picture> pictureList = new ArrayList<Picture>();
             pictureList = jdbc.findPictureByNewsId(id);//这里的bug是怎么肥事呢！！！
             String column = news.getColumn();
@@ -57,7 +57,7 @@ public class ShowNews {
         for( News news :newsList){
             int layoutType=news.getLayoutType();
             String title=news.getTitle();
-            int id=news.getId();
+            int id=news.getNews_id();
             List<Picture> pictureList =new ArrayList<Picture>();
             pictureList=jdbc.findPictureByNewsId(id);
             String column=news.getColumn();

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.example.newsapp.MainActivity;
 import com.example.newsapp.R;
 import com.example.newsapp.adapter.TabPageAdapter;
+import com.example.newsapp.util.HttpUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class TabFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view= inflater.inflate(R.layout.fragment_tab, container, false);
+
         mTabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
         mViewPager = (ViewPager) view.findViewById(R.id.middle_viewPager);
         fragments=new ArrayList<>();

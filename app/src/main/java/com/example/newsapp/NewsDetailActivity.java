@@ -3,10 +3,12 @@ package com.example.newsapp;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.http.SslError;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -39,6 +41,7 @@ import com.example.newsapp.db.JDBC;
 import com.example.newsapp.db.LikeNews;
 import com.example.newsapp.db.News;
 import com.example.newsapp.db.Relate;
+import com.example.newsapp.util.HttpUtil;
 import com.example.newsapp.util.NoScrollWebView;
 import com.ldoublem.thumbUplib.ThumbUpView;
 
@@ -70,12 +73,21 @@ public class NewsDetailActivity extends AppCompatActivity {
     private EditText commentEdit;
     private int news_id;
     private int user_id;
+    private int collectCount;
+    private int newsdislikeCount;
+    private int newslikeCount;
+    private int userdislikeCount;
+    private int userlikeCount;
+    private int count;
     private ImageButton collect;
+    private HttpUtil httpUtil=new HttpUtil();
+    private SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
         intent=getIntent();
+        DataSupport.deleteAll(Comment.class);
         news_id=intent.getIntExtra("news_id",0);
         user_id=GlobalData.getUserId();
 
@@ -90,21 +102,57 @@ public class NewsDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);  //不显示toolbar后边的名称
 
         setNewsInfo();
+        setRelateStories();
+        likeImageView = (ImageView) findViewById(R.id.like_imageView);
+        likeNumber = (TextView) findViewById(R.id.like_number);
+        dislikeImageView = (ImageView) findViewById(R.id.dislike_imageView);
+        dislikeNumber = (TextView) findViewById(R.id.dislike_number);
+        radioGroup=(RadioGroup)findViewById(R.id.radioGroup);
+        like=(RadioButton)findViewById(R.id.like);
+        dislike=(RadioButton)findViewById(R.id.dislike);
+        collect=(ImageButton)findViewById(R.id.collect);
 
-        webView=(NoScrollWebView) findViewById(R.id.news_content);
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient());
-        initWebview();
-        webView.post(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                webView.loadUrl("http://daily.zhihu.com/story/9712222?utm_campaign=in_app_share&utm_medium=Android&utm_source=Weixin");
+                httpUtil.sendOkHttpForNewsDetail(news_id,user_id,"newsDetail");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pref = PreferenceManager.getDefaultSharedPreferences(NewsDetailActivity.this);
+                        collectCount=pref.getInt("collectCount",0);
+                        newsdislikeCount=pref.getInt("newsdislikeCount",0);
+                        newslikeCount=pref.getInt("newslikeCount",0);
+                        userdislikeCount=pref.getInt("userdislikeCount",0);
+                        userlikeCount=pref.getInt("userlikeCount",0);
+                        webView=(NoScrollWebView) findViewById(R.id.news_content);
+                        webView.getSettings().setJavaScriptEnabled(true);
+                        webView.setWebViewClient(new WebViewClient());
+                        initWebview();
+                        webView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                webView.loadUrl("http://daily.zhihu.com/story/9712222?utm_campaign=in_app_share&utm_medium=Android&utm_source=Weixin");
+                            }
+                        });
+                        if(collectCount!=0){
+                            collect.setImageResource(R.mipmap.colleted);
+                        }
+                        collect.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                collect();
+                            }
+                        });
+
+                        showLatestComment();
+                        judgeLikeOrDislike();
+                        likeOrdislike();
+                    }
+                });
             }
-        });
+        }).start();
 
-
-        setRelateStories();
-        showLatestComment();
         send=(ImageButton)findViewById(R.id.sendComment);
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,28 +174,6 @@ public class NewsDetailActivity extends AppCompatActivity {
         });
 
 
-        likeImageView = (ImageView) findViewById(R.id.like_imageView);
-        likeNumber = (TextView) findViewById(R.id.like_number);
-        dislikeImageView = (ImageView) findViewById(R.id.dislike_imageView);
-        dislikeNumber = (TextView) findViewById(R.id.dislike_number);
-        radioGroup=(RadioGroup)findViewById(R.id.radioGroup);
-        like=(RadioButton)findViewById(R.id.like);
-        dislike=(RadioButton)findViewById(R.id.dislike);
-        judgeLikeOrDislike();
-        likeOrdislike();
-
-
-        collect=(ImageButton)findViewById(R.id.collect);
-        int count=DataSupport.where("user_id=? and news_id=?",user_id+"",news_id+"").count(Collect.class);
-        if(count!=0){
-            collect.setImageResource(R.mipmap.colleted);
-        }
-        collect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                collect();
-            }
-        });
     }
     private void initWebview() {
         WebSettings webSettings = webView.getSettings();
@@ -197,21 +223,17 @@ public class NewsDetailActivity extends AppCompatActivity {
         });
     }
     private void judgeLikeOrDislike(){
-        int countlikeFirst=DataSupport.where("news_id=? and user_id=?",news_id+"",user_id+"").count(LikeNews.class);
-        int countDislikeFirst=DataSupport.where("news_id=? and user_id=?",news_id+"",user_id+"").count(DislikeNews.class);
-        if (countlikeFirst!=0){
+        likeNumber.setText( newslikeCount + "");
+        dislikeNumber.setText( newsdislikeCount + "");
+        if (userlikeCount!=0){
             like.setChecked(true);
             likeImageView.setImageResource(R.mipmap.like_checked);
-            int countLike=DataSupport.where("news_id=?", news_id + "").count(LikeNews.class);
-            likeNumber.setText(countLike + "");
             likeNumber.setTextColor(getResources().getColor(R.color.colorColumn));
             dislike.setClickable(false);
         }
-        if(countDislikeFirst!=0){
+        if(userdislikeCount!=0){
             dislike.setChecked(true);
             dislikeImageView.setImageResource(R.mipmap.dislike_checked);
-            int countDislike = DataSupport.where("news_id=?", news_id + "").count(DislikeNews.class);
-            dislikeNumber.setText(countDislike + "");
             dislikeNumber.setTextColor(getResources().getColor(R.color.colorColumn));
             like.setClickable(false);
 
@@ -226,21 +248,29 @@ public class NewsDetailActivity extends AppCompatActivity {
 
                 if (like.isChecked() == true) {
                     likeImageView.setImageResource(R.mipmap.like_checked);
-                    jdbc.InsertDataToLikeNews(news_id, user_id);
-                    int countLike = DataSupport.where("news_id=?", news_id + "").count(LikeNews.class);
-                    likeNumber.setText(countLike + "");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            httpUtil.sendOkHttpForNewsDetail(news_id,user_id,"insertLike");
+                        }
+                    }).start();
+
+                    likeNumber.setText(newslikeCount+1+"");
                     likeNumber.setTextColor(getResources().getColor(R.color.colorColumn));
                     dislike.setClickable(false);
-                    //以后写数字+1的逻辑
                 }
                 if (dislike.isChecked() == true) {
                     dislikeImageView.setImageResource(R.mipmap.dislike_checked);
-                    jdbc.InsertDataToDislikeNews(news_id, user_id);
-                    int countDislike = DataSupport.where("news_id=?", news_id + "").count(DislikeNews.class);
-                    dislikeNumber.setText(countDislike + "");
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            httpUtil.sendOkHttpForNewsDetail(news_id,user_id,"insertDislike");
+                        }
+                    }).start();
+
+                    dislikeNumber.setText(newsdislikeCount+1+ "");
                     dislikeNumber.setTextColor(getResources().getColor(R.color.colorColumn));
                     like.setClickable(false);
-                    //以后写数字+1的逻辑
                 }
             }
         });
@@ -284,12 +314,18 @@ public class NewsDetailActivity extends AppCompatActivity {
         jdbc.InsertDataToComment(comment,news_id,user_id,time);
         showLatestComment();
         commentEdit.setText("");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                httpUtil.sendOkHttpForComment(news_id,user_id,comment,time);
+            }
+        }).start();
     }
     private void setNewsInfo(){
         TextView newsTitle=(TextView)findViewById(R.id.news_title_detail);
         TextView author=(TextView)findViewById(R.id.news_author);
         TextView newsTime=(TextView)findViewById(R.id.news_time);
-        List<News> newslist=DataSupport.where("id=?",news_id+"").find(News.class);
+        List<News> newslist=DataSupport.where("news_id=?",news_id+"").find(News.class);
         if (newslist.size()!=0){
             News news=newslist.get(0);
             newsTitle.setText(news.getTitle());
@@ -299,15 +335,36 @@ public class NewsDetailActivity extends AppCompatActivity {
 
     }
     private void collect(){
-        int count=DataSupport.where("user_id=? and news_id=?",user_id+"",news_id+"").count(Collect.class);
-        if(count!=0){
-            DataSupport.deleteAll(Collect.class,"user_id=? and news_id=?",user_id+"",news_id+"");
-            collect.setImageResource(R.mipmap.collect);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                count=httpUtil.sendOkHttpForNewsDetail(news_id, user_id,"countCollect");
 
-        }else {
-             collect.setImageResource(R.mipmap.colleted);
-             jdbc.InsertDataToCollect(news_id, user_id);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(" collectCount", count+"");
+                        if(count!=0){
+                            collect.setImageResource(R.mipmap.collect);
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    httpUtil.sendOkHttpForNewsDetail(news_id, user_id,"deleteCollect");
+                                }
+                            }).start();
+                        }else {
+                            collect.setImageResource(R.mipmap.colleted);
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    httpUtil.sendOkHttpForNewsDetail(news_id, user_id,"insertCollect");
+                                }
+                            }).start();
+                        }
+                    }
+                });
+            }
+        }).start();
 
-        }
     }
 }
