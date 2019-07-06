@@ -7,18 +7,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bm.library.PhotoView;
+
 import java.util.ArrayList;
 
-public class ScrollAdapter extends PagerAdapter {
-    private ArrayList<ImageView> imageViews;
+public class ImgAdapter extends PagerAdapter {
+    private ArrayList<PhotoView> imageViews;
 
-    public ScrollAdapter(ArrayList<ImageView> imageViews) {
+    public ImgAdapter(ArrayList<PhotoView> imageViews) {
         this.imageViews = imageViews;
     }
 
     @Override
     public int getCount() {
-        return Integer.MAX_VALUE;
+        return imageViews.size();
     }
 
     @Override
@@ -31,7 +33,7 @@ public class ScrollAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         int i = position % imageViews.size();
         //根据条目所在位子,从imageviews集合中获取相对应的图片
-        ImageView imageView = imageViews.get(i);
+        PhotoView imageView = imageViews.get(i);
         //把得到的imageview对象,添加到viewpager,也就是container
         ViewPager parentViewGroup = (ViewPager)imageView.getParent();
         if (parentViewGroup != null) {
@@ -46,6 +48,6 @@ public class ScrollAdapter extends PagerAdapter {
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
 
-       /* container.removeView((View) object);*/
+        container.removeView((View) object);
     }
 }

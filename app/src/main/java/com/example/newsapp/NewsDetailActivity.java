@@ -42,6 +42,7 @@ import com.example.newsapp.db.LikeNews;
 import com.example.newsapp.db.News;
 import com.example.newsapp.db.Relate;
 import com.example.newsapp.util.HttpUtil;
+import com.example.newsapp.util.MJavascriptInterface;
 import com.example.newsapp.util.NoScrollWebView;
 import com.ldoublem.thumbUplib.ThumbUpView;
 
@@ -132,7 +133,7 @@ public class NewsDetailActivity extends AppCompatActivity {
                         webView.post(new Runnable() {
                             @Override
                             public void run() {
-                                webView.loadUrl("http://daily.zhihu.com/story/9712222?utm_campaign=in_app_share&utm_medium=Android&utm_source=Weixin");
+                                webView.loadUrl("http://10.128.231.97:3000/get/newsContent");
                             }
                         });
                         if(collectCount!=0){
@@ -176,6 +177,7 @@ public class NewsDetailActivity extends AppCompatActivity {
 
     }
     private void initWebview() {
+        webView.addJavascriptInterface(new MJavascriptInterface(this), "imagelistener");//将js对象与java对象进行映射
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         //启用应用缓存
@@ -205,6 +207,7 @@ public class NewsDetailActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                addImageClickListener(view);
             }
             @TargetApi(android.os.Build.VERSION_CODES.M)
             @Override
@@ -367,4 +370,19 @@ public class NewsDetailActivity extends AppCompatActivity {
         }).start();
 
     }
+    private void addImageClickListener(WebView webView) {
+        //"cc_detail_blog_img"这个ClassName和前端对应的，前端那边不能修改，对应的是img的ClassName
+        webView.loadUrl("javascript:(function(){" +
+                "var objs = document.getElementsByClassName(\"cc_detail_blog_img\"); " +
+                " var array=new Array(); " + " for(var j=0;j<objs.length;j++){ " + "array[j]=objs[j].src;" + " }  " +
+                "for(var i=0;i<objs.length;i++)  " +
+                "{" +
+                "  objs[i].onclick=function()  " +
+                "  {  " +
+                "    window.imagelistener.openImage(this.src,array);  " +
+                "  }  " +
+                "}" +
+                "})()");
+    }
 }
+
