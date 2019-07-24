@@ -17,6 +17,6 @@
         android:layout_height="30dp"
         android:text="Search People's daily"
         android:gravity="center"
-        android:textColor="@color/colorGray"
+        android:textColor="@color/searchview_color"
         android:textSize="15sp"/>
 </LinearLayout>

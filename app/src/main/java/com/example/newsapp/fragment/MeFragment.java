@@ -3,11 +3,14 @@ package com.example.newsapp.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.PrecomputedText;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +28,14 @@ import com.example.newsapp.Settings;
 import com.example.newsapp.db.GlobalData;
 import com.example.newsapp.db.User;
 import com.example.newsapp.util.HttpUtil;
+import com.example.newsapp.util.SaveBitmap;
+import com.example.newsapp.util.UrlToBitmap;
 
 import org.litepal.crud.DataSupport;
+
+import javax.xml.transform.Result;
+
+import static org.litepal.LitePalApplication.getContext;
 
 public class MeFragment extends Fragment implements View.OnClickListener{
     private LinearLayout myFavorites;
@@ -36,6 +45,8 @@ public class MeFragment extends Fragment implements View.OnClickListener{
     private TextView account;
     private TextView username;
     private Intent intent;
+    private String url;
+    private Bitmap bitmap;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,6 +62,9 @@ public class MeFragment extends Fragment implements View.OnClickListener{
         myFavorites.setOnClickListener(this);
         myComments.setOnClickListener(this);
         mySetting.setOnClickListener(this);
+
+
+
         return view;
 
     }
@@ -63,8 +77,16 @@ public class MeFragment extends Fragment implements View.OnClickListener{
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.head);
             userHead.setImageBitmap(bitmap);
         }else{
-            Bitmap bitmap=BitmapFactory.decodeFile(user.getHeadPicture());
-            userHead.setImageBitmap(bitmap);
+            SharedPreferences sharedPreferences=getContext().getSharedPreferences("testSP", Context.MODE_PRIVATE);
+            if(sharedPreferences!=null){
+                bitmap=SaveBitmap.getBitmap(sharedPreferences);
+                userHead.setImageBitmap(bitmap);
+            }else{
+                url="http://192.168.43.166:3000/headPicture/"+user.getHeadPicture();
+                MyTask mTask = new MyTask();
+                mTask.execute();
+            }
+
         }
         username.setText(user.getUsername());
         account.setText(user.getUserAccount());
@@ -85,4 +107,37 @@ public class MeFragment extends Fragment implements View.OnClickListener{
                 startActivity(intent); break;
         }
     }
+    private class MyTask extends AsyncTask<Void,Integer, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            try{
+                bitmap=UrlToBitmap.UrlToBitmap(url);
+                SaveBitmap.SaveBitmap(bitmap);
+                publishProgress();
+            }catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+
+        // 方法4：onPostExecute（）
+        // 作用：接收线程任务执行结果、将执行结果显示到UI组件
+        // 注：必须复写，从而自定义UI操作
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if(result){
+                userHead.setImageBitmap(bitmap);
+            }
+
+        }
+    }
+
 }
+

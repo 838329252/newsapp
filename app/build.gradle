@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.newsapp"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -30,7 +30,10 @@ dependencies {
     implementation 'com.ldoublem.thumbUplib:ThumbUplib:0.2'
     implementation 'com.squareup.okhttp3:okhttp:3.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
     implementation 'com.bm.photoview:library:1.4.1'
+    implementation 'com.github.wseemann:FFmpegMediaMetadataRetriever:1.0.14'
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.4'
     testImplementation 'junit:junit:4.12'
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.0'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

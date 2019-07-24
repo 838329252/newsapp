@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,10 +53,18 @@ public class ViewPhotoActivity extends AppCompatActivity implements View.OnClick
     private String url;
     private Bitmap bitmap;
     private Bitmap bitmap1;
+    private Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_photo);
+        toolbar=(Toolbar)findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         intent=getIntent();
         imgUrls=intent.getStringArrayExtra("imageUrls");
         curImg=intent.getStringExtra("curImg");
@@ -69,6 +78,7 @@ public class ViewPhotoActivity extends AppCompatActivity implements View.OnClick
     private void init() {
         pager = (ViewPager) findViewById(R.id.viewPager);
         //在addView之前加入如下代码
+        //photoView是缩放插件
         final ArrayList<PhotoView> imageViews = new ArrayList<>();
         /*ImageView imageView = new ImageView(this);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -177,7 +187,6 @@ public class ViewPhotoActivity extends AppCompatActivity implements View.OnClick
         try {
             File file = new File(dir + fileName + ".jpg");
             FileOutputStream out = new FileOutputStream(file);
-            Log.d("bitmapCheck",bitmap+"");
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
             out.close();

@@ -14,6 +14,7 @@ import org.litepal.crud.DataSupport;
 
 public class GlobalData extends DataSupport {
     private static String userAccount;
+    private static int videoCurposition;
     public static int getUserId() {
         List<User> list=DataSupport.where("userAccount=?",userAccount).find(User.class);
         int user_id=list.get(0).getUser_id();
@@ -28,4 +29,11 @@ public class GlobalData extends DataSupport {
         GlobalData.userAccount = userAccount;
     }
 
+    public static int getVideoCurposition() {
+        return videoCurposition;
+    }
+
+    public static void setVideoCurposition(int videoCurposition) {
+        GlobalData.videoCurposition = videoCurposition;
+    }
 }

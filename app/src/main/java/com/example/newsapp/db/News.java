@@ -12,6 +12,7 @@ public class News extends DataSupport {
     private String title;
     private String author;
     private String content;
+    private String VideoUrl;
     private String time;
     private int layoutType;
     private String column;
@@ -144,5 +145,13 @@ public class News extends DataSupport {
 
     public void setNews_id(int news_id) {
         this.news_id = news_id;
+    }
+
+    public String getVideoUrl() {
+        return VideoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        VideoUrl = videoUrl;
     }
 }

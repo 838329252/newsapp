@@ -28,6 +28,9 @@ import com.example.newsapp.db.JDBC;
 import com.example.newsapp.db.News;
 import com.example.newsapp.db.Picture;
 import com.example.newsapp.util.Search;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.litepal.crud.DataSupport;
 
@@ -46,7 +49,8 @@ public class TopNewsFragment extends Fragment {
     private LinearLayout ll_dot;
     private TextView fakeSearchView;
     private List<News> newslist;
-    private int[] imageResIds=new int[4];
+    private RefreshLayout refreshLayout;
+    private String[] imageResIds=new String[4];
     private String[] descs=new String[4];
     private int[] newsId=new int[4];
     Handler handler = new Handler() {
@@ -82,7 +86,7 @@ public class TopNewsFragment extends Fragment {
                 List<Picture> list=DataSupport.where("news_id=?",news_id+"").find(Picture.class);
                 if (list.size()!=0){
                     imageResIds[i]=list.get(0).getPictureUrl();
-                }else imageResIds[i]=R.drawable.picture_3;
+                }else imageResIds[i]=R.drawable.picture_3+"";
                 descs[i]=news.getTitle();
                 i++;
             }
@@ -90,7 +94,7 @@ public class TopNewsFragment extends Fragment {
         }else{
             for(i=0;i<4;i++){
                 newsId[i]=i;
-                imageResIds[i]=R.drawable.picture_3;
+                imageResIds[i]=R.drawable.picture_3+"";
                 descs[i]=i+"";
             }
         }
@@ -103,6 +107,8 @@ public class TopNewsFragment extends Fragment {
                 getContext().startActivity(intent);
             }
         });
+
+        setPullRefresher();
         return view;
     }
 
@@ -224,5 +230,21 @@ public class TopNewsFragment extends Fragment {
              childAt.setBackgroundResource(i == position ? R.drawable.p_dot_focus : R.drawable.p_dot_normal);
          }
      }
+
+    private void setPullRefresher(){
+        refreshLayout = (RefreshLayout)view.findViewById(R.id.refreshLayout);
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
+            }
+        });
+        refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                refreshlayout.finishLoadmore(2000/*,false*/);//传入false表示加载失败
+            }
+        });
+    }
 
 }

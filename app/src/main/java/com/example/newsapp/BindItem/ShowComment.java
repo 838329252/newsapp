@@ -1,11 +1,14 @@
 package com.example.newsapp.BindItem;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -25,6 +28,8 @@ import com.example.newsapp.db.News;
 import com.example.newsapp.db.User;
 import com.example.newsapp.util.HandleJSON;
 import com.example.newsapp.util.HttpUtil;
+import com.example.newsapp.util.SaveBitmap;
+import com.example.newsapp.util.UrlToBitmap;
 
 import org.litepal.crud.DataSupport;
 
@@ -41,11 +46,14 @@ public class ShowComment {
     private TextView username;
     private TextView commentContent;
     private TextView commentTime;
+    private ImageView deleteComment;
     private Comment comment;
     private TextView titleForComments;
     private int  viewId;
     private int user_id;
     private HttpUtil httpUtil=new HttpUtil();
+    private String url;
+    private Bitmap bitmap;
     public ShowComment(Comment comment,LinearLayout container){
         view=LayoutInflater.from(getContext()).inflate(R.layout.item_comment,container,false);
         this.viewId=R.layout.item_comment;
@@ -68,8 +76,10 @@ public class ShowComment {
         username=(TextView)view.findViewById(R.id.username);
         commentContent=(TextView)view.findViewById(R.id.comment_content);
         commentTime=(TextView)view.findViewById(R.id.comment_time);
-        if(viewId==R.layout.item_comment_two)
+        if(viewId==R.layout.item_comment_two){
             titleForComments=(TextView)view.findViewById(R.id.titieForComments);
+            deleteComment=(ImageView)view.findViewById(R.id.deleteComment);
+        }
     }
     public void addView(){
             String content=comment.getContent();
@@ -91,12 +101,21 @@ public class ShowComment {
                 Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.mipmap.head);
                 head.setImageBitmap(bitmap);
             }else{
-                Bitmap bitmap=BitmapFactory.decodeFile(user.getHeadPicture());
-                head.setImageBitmap(bitmap);
+                SharedPreferences sharedPreferences=getContext().getSharedPreferences("testSP", Context.MODE_PRIVATE);
+                if(sharedPreferences!=null){
+                    bitmap=SaveBitmap.getBitmap(sharedPreferences);
+                    head.setImageBitmap(bitmap);
+                }else{
+                    url="http://192.168.43.166:3000/headPicture/"+user.getHeadPicture();
+                    MyTask myTask=new MyTask();
+                    myTask.execute();
+                }
+
             }
             username.setText(name);
             commentContent.setText(content);
             commentTime.setText(time);
+
             if(viewId==R.layout.item_comment_two) {
                 final int news_id = comment.getNews_id();
                 News news = DataSupport.where("news_id=?", news_id + "").findFirst(News.class);
@@ -110,8 +129,55 @@ public class ShowComment {
                         getContext().startActivity(intent);
                     }
                 });
+                deleteComment.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DataSupport.deleteAll(Comment.class,"comment_id=?",comment.getComment_id()+"");
+                        removeView();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                httpUtil.sendOkHttpToDeleteComment(comment.getComment_id());
+                            }
+                        }).start();
+                    }
+                });
             }
             container.addView(view);
+    }
+    public void removeView(){
+        container.removeView(view);
+    }
+    private class MyTask extends AsyncTask<Void,Integer, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            try{
+                bitmap=UrlToBitmap.UrlToBitmap(url);
+                SaveBitmap.SaveBitmap(bitmap);
+                publishProgress();
+            }catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+
+        // 方法4：onPostExecute（）
+        // 作用：接收线程任务执行结果、将执行结果显示到UI组件
+        // 注：必须复写，从而自定义UI操作
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if(result){
+                head.setImageBitmap(bitmap);
+            }
+
+        }
     }
 }
 

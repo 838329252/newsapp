@@ -4,7 +4,7 @@ import org.litepal.crud.DataSupport;
 
 public class Picture extends DataSupport {
     int id;
-    int pictureUrl;
+    String pictureUrl;
     private int news_id;
     private News news;
 
@@ -16,11 +16,11 @@ public class Picture extends DataSupport {
         this.id = id;
     }
 
-    public int getPictureUrl() {
+    public String getPictureUrl() {
         return pictureUrl;
     }
 
-    public void setPictureUrl(int pictureUrl) {
+    public void setPictureUrl(String pictureUrl) {
         this.pictureUrl = pictureUrl;
     }
 

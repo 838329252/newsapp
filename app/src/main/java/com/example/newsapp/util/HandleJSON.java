@@ -10,6 +10,7 @@ import com.example.newsapp.db.JDBC;
 import com.example.newsapp.db.News;
 import com.example.newsapp.db.Picture;
 import com.example.newsapp.db.Relate;
+import com.example.newsapp.db.SearchHistory;
 import com.example.newsapp.db.User;
 import com.google.gson.JsonObject;
 
@@ -32,11 +33,12 @@ public class HandleJSON {
                 News news=new News();
                 news.setNews_id(jsonObject.getInt("id"));
                 news.setTitle(jsonObject.getString("title"));
-                news.setColumn(jsonObject.getString("column"));
+                news.setColumn(jsonObject.getString("columns"));
                 news.setAuthor(jsonObject.getString("author"));
                 news.setContent(jsonObject.getString("content"));
                 news.setTime(jsonObject.getString("time"));
                 news.setLayoutType(jsonObject.getInt("layoutType"));
+                news.setVideoUrl(jsonObject.getString("videoUrl"));
                 news.save();
             }
         }catch(JSONException e){
@@ -49,7 +51,7 @@ public class HandleJSON {
                 JSONObject jsonObject=jsonArray.getJSONObject(i);
                 Picture picture=new Picture();
                 picture.setNews_id(jsonObject.getInt("news_id"));
-                picture.setPictureUrl(jsonObject.getInt("pictureUrl"));
+                picture.setPictureUrl(jsonObject.getString("pictureUrl"));
                 picture.save();
             }
         }catch(JSONException e){
@@ -72,12 +74,7 @@ public class HandleJSON {
     public static int handleLogin(String response){
         int userCount=0;
         try{
-            JSONObject jsonObject=new JSONObject(response);
-            JSONArray jsonArray=jsonObject.getJSONArray("user");
-            String count=jsonObject.getString("number");
-            JSONArray jsonArray1=new JSONArray(count);
-            JSONObject jsonObject1=jsonArray1.getJSONObject(0);
-            userCount=jsonObject1.getInt("COUNT(*)");
+            JSONArray jsonArray=new JSONArray(response);
             handleUserInfo(jsonArray);
         }catch(JSONException e){
             e.printStackTrace();
@@ -200,6 +197,7 @@ public class HandleJSON {
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject=jsonArray.getJSONObject(i);
                 Comment comment=new Comment();
+                comment.setComment_id(jsonObject.getInt("id"));
                 comment.setUser_id(jsonObject.getInt("user_id"));
                 comment.setNews_id(jsonObject.getInt("news_id"));
                 comment.setTime(jsonObject.getString("time"));
@@ -224,6 +222,37 @@ public class HandleJSON {
         }catch(JSONException e){
             e.printStackTrace();
         }
+    }
+    public static void  handleSearch(String response){
+        try{
+            JSONArray jsonArray=new JSONArray(response);
+            for(int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject=jsonArray.getJSONObject(i);
+                SearchHistory searchHistory=new SearchHistory();
+                searchHistory.setUser_id(jsonObject.getInt("user_id"));
+                searchHistory.setSearch_id(jsonObject.getInt("id"));
+                searchHistory.setSearch(jsonObject.getString("searchContent"));
+                searchHistory.save();
+            }
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+    }
+
+    public static int handleNewsOfDifferentColumn(String response){
+        int newsCount=0;
+        try{
+            JSONObject jsonObject=new JSONObject(response);
+            String count=jsonObject.getString("newsCount");
+            JSONArray jsonArray=new JSONArray(count);
+            JSONObject jsonObject1=jsonArray.getJSONObject(0);
+            newsCount=jsonObject1.getInt("COUNT(*)");
+            JSONArray jsonArray1=jsonObject.getJSONArray("newsForColumn");
+            handleNews(jsonArray1);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+        return newsCount;
     }
 
 }

@@ -17,6 +17,7 @@ public class User extends DataSupport {
     private List<LikeNews> likeNewsList=new ArrayList<LikeNews>();
     private List<DislikeNews> dislikeNewsList=new ArrayList<DislikeNews>();
     private List<Collect> collectList=new ArrayList<Collect>();
+    private List<SearchHistory> searchHistoryList=new ArrayList<SearchHistory>();
 
     public int getUser_id() {
         return user_id;
@@ -104,5 +105,13 @@ public class User extends DataSupport {
 
     public void setCollectList(List<Collect> collectList) {
         this.collectList = collectList;
+    }
+
+    public List<SearchHistory> getSearchHistoryList() {
+        return searchHistoryList;
+    }
+
+    public void setSearchHistoryList(List<SearchHistory> searchHistoryList) {
+        this.searchHistoryList = searchHistoryList;
     }
 }

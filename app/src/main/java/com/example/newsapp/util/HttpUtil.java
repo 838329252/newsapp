@@ -2,6 +2,7 @@ package com.example.newsapp.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -47,6 +48,7 @@ public class HttpUtil {
     private String userData;
     private int news_id;
     private int user_id;
+    final String localhost="http://192.168.43.166:3000/get/";
     public  String sendOkHttpRequest(String url) {
         httpUrl=url;
         new Thread(new Runnable() {
@@ -55,7 +57,7 @@ public class HttpUtil {
                 try{
                     OkHttpClient client=new OkHttpClient();
                     Request request=new Request.Builder()
-                            .url("http://10.128.231.97:3000/get/"+httpUrl)
+                            .url(localhost+httpUrl)
                             .build();
                     Response response=client.newCall(request).execute();
                     responseData=response.body().string();
@@ -85,7 +87,7 @@ public class HttpUtil {
                     .add("userId",user_id+"")
                     .build();
             Request request=new Request.Builder()
-                    .url("http://10.128.231.97:3000/get/"+ url)
+                    .url(localhost+ url)
                     .post(requestBody)
                     .build();
             Response response=client.newCall(request).execute();
@@ -118,16 +120,17 @@ public class HttpUtil {
                     .add("time",time)
                     .build();
             Request request=new Request.Builder()
-                    .url("http://10.128.231.97:3000/get/insertComment")
+                    .url(localhost+"insertComment")
                     .post(requestBody)
                     .build();
             Response response=client.newCall(request).execute();
             responseData=response.body().string();
+            HandleJSON.handleComment(responseData);
         }catch (Exception e){
             e.printStackTrace();
         }
     }
-    public int sendOkHttpForLogin(String userAccounts, String passwords){
+    public void sendOkHttpForLogin(String userAccounts, String passwords){
         userAccount=userAccounts;
         password=passwords;
         try{
@@ -137,16 +140,16 @@ public class HttpUtil {
                     .add("password",password)
                     .build();
             Request request=new Request.Builder()
-                    .url("http://10.128.231.97:3000/get/login")
+                    .url(localhost+"login")
                     .post(requestBody)
                     .build();
             Response response = client.newCall(request).execute();
             String responseData = response.body().string();
-            count=HandleJSON.handleLogin(responseData);
+            Log.d("responseData",responseData);
+            HandleJSON.handleLogin(responseData);
         }catch (Exception e){
             e.printStackTrace();
         }
-        return count;
     }
     public  String sendOkHttpForRegister(String userAccounts, String passwords){
         userAccount=userAccounts;
@@ -158,7 +161,7 @@ public class HttpUtil {
                     .add("password",password)
                     .build();
             Request request=new Request.Builder()
-                    .url("http://10.128.231.97:3000/get/register")
+                    .url(localhost+"register")
                     .post(requestBody)
                     .build();
             Response response = client.newCall(request).execute();
@@ -177,7 +180,7 @@ public class HttpUtil {
                     .add("userId",user_id+"")
                     .build();
             Request request=new Request.Builder()
-                    .url("http://10.128.231.97:3000/get/"+url)
+                    .url(localhost+url)
                     .post(requestBody)
                     .build();
             Response response = client.newCall(request).execute();
@@ -201,7 +204,7 @@ public class HttpUtil {
                     .add("head",headUrl)
                     .build();
             Request request=new Request.Builder()
-                    .url("http://10.128.231.97:3000/get/updateHead")
+                    .url(localhost+"updateHead")
                     .post(requestBody)
                     .build();
             Response response = client.newCall(request).execute();
@@ -218,7 +221,7 @@ public class HttpUtil {
                     .add("username",username)
                     .build();
             Request request=new Request.Builder()
-                    .url("http://10.128.231.97:3000/get/updateUsername")
+                    .url(localhost+"updateUsername")
                     .post(requestBody)
                     .build();
             Response response = client.newCall(request).execute();
@@ -235,7 +238,7 @@ public class HttpUtil {
                     .add("password",password)
                     .build();
             Request request=new Request.Builder()
-                    .url("http://10.128.231.97:3000/get/updatePassword")
+                    .url(localhost+"updatePassword")
                     .post(requestBody)
                     .build();
             Response response = client.newCall(request).execute();
@@ -243,6 +246,105 @@ public class HttpUtil {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+    public  void sendOkHttpForSearchHistory(int user_id){
+        try{
+            OkHttpClient client=new OkHttpClient();
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("userId",user_id+"")
+                    .build();
+            Request request=new Request.Builder()
+                    .url(localhost+"searchHistory")
+                    .post(requestBody)
+                    .build();
+            Response response = client.newCall(request).execute();
+            responseData = response.body().string();
+            HandleJSON.handleSearch(responseData);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public  void sendOkHttpUpdateSearchHistory(int user_id,String content){
+        try{
+            OkHttpClient client=new OkHttpClient();
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("userId",user_id+"")
+                    .add("content",content)
+                    .build();
+            Request request=new Request.Builder()
+                    .url(localhost+"updateSearch")
+                    .post(requestBody)
+                    .build();
+            Response response = client.newCall(request).execute();
+            responseData = response.body().string();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public  void sendOkHttpTodeleteSearchHistory(int search_id){
+        try{
+            OkHttpClient client=new OkHttpClient();
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("Id",search_id+"")
+                    .build();
+            Request request=new Request.Builder()
+                    .url(localhost+"deleteSearch")
+                    .post(requestBody)
+                    .build();
+            Response response = client.newCall(request).execute();
+            responseData = response.body().string();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public  void sendOkHttpToclearSearchHistory(){
+        try{
+            OkHttpClient client=new OkHttpClient();
+            Request request=new Request.Builder()
+                    .url(localhost+"clearSearch")
+                    .build();
+            Response response = client.newCall(request).execute();
+            responseData = response.body().string();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void sendOkHttpToDeleteComment(int id){
+        try{
+            OkHttpClient client=new OkHttpClient();
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("commentId",id+"")
+                    .build();
+            Request request=new Request.Builder()
+                    .url(localhost+"deleteComment")
+                    .post(requestBody)
+                    .build();
+            Response response = client.newCall(request).execute();
+            responseData = response.body().string();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public int sendOkHttpForNewsOfDifferentColumn(String column,int limitA,int limitB){
+        int newsCount=0;
+        try{
+            OkHttpClient client=new OkHttpClient();
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("column",column)
+                    .add("limitA",limitA+"")
+                    .add("limitB",limitB+"")
+                    .build();
+            Request request=new Request.Builder()
+                    .url(localhost+"newsColumn")
+                    .post(requestBody)
+                    .build();
+            Response response = client.newCall(request).execute();
+            responseData = response.body().string();
+            newsCount=HandleJSON.handleNewsOfDifferentColumn(responseData);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return newsCount;
     }
 
 }

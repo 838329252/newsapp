@@ -29,7 +29,14 @@ public class ShowNews {
         if(newsList.size()!=0){
             showNewsInfo();
         }
-
+    }
+    public ShowNews(List<News> list, LinearLayout container,boolean itemBottomVisibility){
+        this.newsList=list;
+        this.container=container;
+        this.itemBottomVisibility=itemBottomVisibility;
+        if(newsList.size()!=0){
+            showNewsInfo();
+        }
     }
     public ShowNews( LinearLayout container,boolean itemBottomVisibility,List<News> newsList) {
         this.container = container;
@@ -38,14 +45,13 @@ public class ShowNews {
         if (newsList.size()!=0){
             showRelateNewsInfo();
         }
-
     }
     private void showRelateNewsInfo() {
         for (News news : newsList) {
             String title = news.getTitle();
             int id = news.getNews_id();
             List<Picture> pictureList = new ArrayList<Picture>();
-            pictureList = jdbc.findPictureByNewsId(id);//这里的bug是怎么肥事呢！！！
+            pictureList = jdbc.findPictureByNewsId(id);
             String column = news.getColumn();
             if(pictureList.size()!=0){
                 BindItemSmall bindItemSmall = new BindItemSmall(R.layout.item_picture_small, container, title, pictureList, column, itemBottomVisibility, id);

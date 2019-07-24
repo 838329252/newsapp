@@ -10,6 +10,7 @@
        android:orientation="vertical">
        <include layout="@layout/back"/>
        <ScrollView
+           android:id="@+id/rl_dd"
            android:layout_width="match_parent"
            android:layout_height="wrap_content">
            <LinearLayout
@@ -20,11 +21,14 @@
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
                    android:orientation="vertical"
-                   android:layout_marginHorizontal="16dp">
+                  >
                    <LinearLayout
+                       android:id="@+id/top"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
                        android:orientation="vertical"
+                       android:layout_marginBottom="10dp"
+                       android:layout_marginHorizontal="16dp"
                        >
                        <TextView
                            android:id="@+id/news_title_detail"
@@ -48,49 +52,78 @@
                            android:text="13:16 June 04, 2019"
                            android:layout_marginTop="16dp"/>
                    </LinearLayout>
-                   <com.example.newsapp.util.NoScrollWebView
-                       android:id="@+id/news_content"
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:layout_marginBottom="30dp"/>
-                   <include layout="@layout/like_or_dislike"/>
-                   <include layout="@layout/related_stories"/>
-                   <include layout="@layout/comment"/>
                    <RelativeLayout
+                       android:id="@+id/rlTop"
                        android:layout_width="match_parent"
-                       android:layout_height="wrap_content">
-                       <LinearLayout
+                       android:layout_height="200dp">
+                       <com.example.newsapp.util.VideoView
+                           android:id="@+id/videoView"
+                           android:layout_width="match_parent"
+                           android:layout_height="match_parent" />
+                       <TextView
+                           android:id="@+id/volume"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
                            android:layout_centerInParent="true"
-                           android:clickable="true">
-                           <TextView
-                               android:id="@+id/viewAll"
+                           />
+                       <ImageView
+                           android:id="@+id/firstFrame"
+                           android:layout_width="match_parent"
+                           android:layout_height="match_parent"
+                           android:visibility="gone"
+                           android:scaleType="centerCrop" />
+                   </RelativeLayout>
+                   <LinearLayout
+                       android:id="@+id/middle"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:orientation="vertical"
+                       android:layout_marginHorizontal="16dp">
+                       <com.example.newsapp.util.NoScrollWebView
+                           android:id="@+id/news_content"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_marginBottom="30dp"/>
+                       <include layout="@layout/like_or_dislike"/>
+                       <include layout="@layout/related_stories"/>
+                       <include layout="@layout/comment"/>
+                       <RelativeLayout
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content">
+                           <LinearLayout
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
-                               android:text="View all comments"
-                               android:textSize="18sp"
-                               android:textStyle="bold"
-                               android:textColor="@color/colorBlack"
-                               android:clickable="true"/>
-                           <ImageView
-                               android:layout_width="25dp"
-                               android:layout_height="25dp"
-                               android:src="@mipmap/go"/>
-                       </LinearLayout>
+                               android:layout_centerInParent="true"
+                               android:clickable="true">
+                               <TextView
+                                   android:id="@+id/viewAll"
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:text="View all comments"
+                                   android:textSize="18sp"
+                                   android:textStyle="bold"
+                                   android:textColor="@color/colorBlack"
+                                   android:clickable="true"/>
+                               <ImageView
+                                   android:layout_width="25dp"
+                                   android:layout_height="25dp"
+                                   android:src="@mipmap/go"/>
+                           </LinearLayout>
 
-                   </RelativeLayout>
-                   <ImageView
-                       android:layout_width="match_parent"
-                       android:layout_height="80dp"
-                       android:background="@color/colorPrimary"/>
+                       </RelativeLayout>
+                       <ImageView
+                           android:layout_width="match_parent"
+                           android:layout_height="80dp"
+                           android:background="@color/colorPrimary"/>
+                   </LinearLayout>
+
                </LinearLayout>
 
            </LinearLayout>
        </ScrollView>
    </LinearLayout>
     <LinearLayout
-        android:id="@+id/layout"
+        android:id="@+id/bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

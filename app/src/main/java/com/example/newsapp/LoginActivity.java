@@ -19,6 +19,7 @@ import com.example.newsapp.db.JDBC;
 import com.example.newsapp.db.User;
 
 import com.example.newsapp.util.HttpUtil;
+import com.example.newsapp.util.MD5Util;
 
 import org.litepal.crud.DataSupport;
 
@@ -36,12 +37,14 @@ public class LoginActivity extends AppCompatActivity {
     private TextView toRegister;
     private String responseData;
     private HttpUtil httpUtil;
+    private MD5Util md5Util;
     private int count;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        md5Util=new MD5Util();
         userAccountEdit=(EditText)findViewById(R.id.userAccount);
         passwordEdit=(EditText)findViewById(R.id.password);
         toRegister=(TextView)findViewById(R.id.toRegister);
@@ -53,29 +56,34 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 userAccount=userAccountEdit.getText().toString();
-                password=passwordEdit.getText().toString();
+                password=md5Util.encrypt(passwordEdit.getText().toString());
+                if(userAccount.equals("")||password.equals("")){
+                    Toast.makeText(LoginActivity.this,"账号或密码不为空",Toast.LENGTH_SHORT).show();
+                }
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        count=httpUtil.sendOkHttpForLogin(userAccount,password);
+                        httpUtil.sendOkHttpForLogin(userAccount,password);
                         runOnUiThread(new Runnable(){
 
                             @Override
                             public void run() {
                                 //更新UI
-                                if(count==0){
-                                    Toast.makeText(getContext(),"账号或密码错误",Toast.LENGTH_SHORT).show();
+                                GlobalData.setUserAccount(userAccount);
+                                List<User> userlist=DataSupport.where("userAccount=?",userAccount).find(User.class);
+                                if (userlist.size()==0){
+                                    Toast.makeText(getContext(),"账号不存在请先注册",Toast.LENGTH_SHORT).show();
+                                }else if(userlist.get(0).getPassword().equals(password)) {
+                                    Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                                    startActivity(intent);
                                 }else {
-                                    GlobalData.setUserAccount(userAccount);
-                                   Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                                   startActivity(intent);
+                                    Toast.makeText(getContext(),"密码不正确请重新输入",Toast.LENGTH_SHORT).show();
                                 }
                             }
 
                         });
                     }
                 }).start();
-
             }
 
         });
@@ -86,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                startActivity(intent);
            }
        });
-
 
     }
 }

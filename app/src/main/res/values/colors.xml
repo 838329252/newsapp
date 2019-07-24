@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#ffffff</color>
-    <color name="colorPrimaryDark">#4c7147</color>
+    <color name="colorPrimaryDark">#ffffff</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorColumn">#CC3300</color>
     <color name="colorBlack">#000000</color>
@@ -10,4 +10,8 @@
     <color name="colorDarkGray">#605c5c</color>
     <color name="colorMiddleGray">#868282</color>
     <color name="colorForMe">#efebeb</color>
+    <color name="dim_foreground_dark">#bebebe</color>
+    <color name="background_material_light">#ffffff</color>
+    <color name="primary_text_default_material_dark">#000000</color>
+    <color name="colorStatusBar">#ffffff</color>
 </resources>

@@ -3,24 +3,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <include layout="@layout/back"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:layout_width="300dp"
-            android:layout_height="wrap_content">
-            <include layout="@layout/searchview"/>
-        </LinearLayout>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <android.support.v7.widget.SearchView
+            android:id="@+id/searchEdit"
+            android:layout_width="250dp"
+            android:layout_height="30dp"
+            android:background="@drawable/search_selector"
+            android:queryHint="Search People's Daily"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="8dp"
+            android:iconifiedByDefault="false">
+        </android.support.v7.widget.SearchView>
         <Button
             android:id="@+id/cancle"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:textColor="@color/colorColumn"
-            android:text="CANCLE"/>
+            android:text="CANCLE"
+            android:textColor="@color/colorColumn" />
     </LinearLayout>
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/searchResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        </LinearLayout>
+    </ScrollView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/historySearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:id="@+id/clearAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Clear search history"
+        android:layout_marginVertical="10dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:clickable="true"/>
+    <include layout="@layout/line"/>
+    <RelativeLayout
+        android:id="@+id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search results are empty"
+            android:layout_centerInParent="true"
+            android:textSize="20sp"/>
+    </RelativeLayout>
 
 </LinearLayout>

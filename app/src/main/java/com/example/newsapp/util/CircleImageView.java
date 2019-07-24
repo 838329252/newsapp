@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
@@ -63,5 +64,10 @@ public class CircleImageView extends AppCompatImageView { //画笔
         } else {
             super.onDraw(canvas);
         }
+    }
+
+    @Override
+    public void setImageURI(@Nullable Uri uri) {
+        super.setImageURI(uri);
     }
 }

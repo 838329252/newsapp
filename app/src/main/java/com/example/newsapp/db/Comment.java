@@ -4,6 +4,7 @@ import org.litepal.crud.DataSupport;
 
 public class Comment extends DataSupport {
     private int id;
+    private int comment_id;
     private String content;
     private int news_id;
     private int user_id;
@@ -17,6 +18,14 @@ public class Comment extends DataSupport {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getComment_id() {
+        return comment_id;
+    }
+
+    public void setComment_id(int comment_id) {
+        this.comment_id = comment_id;
     }
 
     public String getContent() {

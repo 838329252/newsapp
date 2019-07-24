@@ -3,22 +3,28 @@ package com.example.newsapp;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,19 +36,41 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amitshekhar.utils.Utils;
 import com.bumptech.glide.Glide;
 import com.example.newsapp.db.GlobalData;
 import com.example.newsapp.db.User;
+import com.example.newsapp.fragment.MeFragment;
 import com.example.newsapp.util.HttpUtil;
+import com.example.newsapp.util.MD5Util;
+import com.example.newsapp.util.SaveBitmap;
+import com.example.newsapp.util.UrlToBitmap;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.Inflater;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.http.Url;
+
+import static org.litepal.LitePalApplication.getContext;
 
 public class Settings extends AppCompatActivity implements View.OnClickListener {
     private RelativeLayout changeHeadClick;
@@ -64,11 +92,17 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
     private Button cancleChageName;
     private Button cancleChangePass;
     private TextView lotout;
-    private  String imagePath;
+    private String imagePath;
     private String new_pass;
     private HttpUtil httpUtil=new HttpUtil();
     private static final int CHOOSE_PHOTO = 2;
     private static final int CROP_REQUEST_CODE = 3;
+    private MD5Util md5Util=new MD5Util();
+    private Uri uri;
+    private Uri mCutUri;
+    private File cutfile;
+    private String url;
+    private Bitmap bitmap;
 
 
     @Override
@@ -89,8 +123,16 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
             Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.head);
             head.setImageBitmap(bitmap);
         }else{
-            Bitmap bitmap = BitmapFactory.decodeFile(user.getHeadPicture());
-            head.setImageBitmap(bitmap);
+            SharedPreferences sharedPreferences=getContext().getSharedPreferences("testSP", Context.MODE_PRIVATE);
+            if(sharedPreferences!=null){
+                bitmap=SaveBitmap.getBitmap(sharedPreferences);
+                head.setImageBitmap(bitmap);
+            }else{
+                url="http://192.168.43.166:3000/headPicture/"+user.getHeadPicture();
+                MyTask mTask = new MyTask();
+                mTask.execute();
+            }
+
         }
         changeHeadClick.setOnClickListener(this);
         changeUsernameClick.setOnClickListener(this);
@@ -172,8 +214,8 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                     @Override
                     public void onClick(View v) {
                         int id = GlobalData.getUserId();
-                        String old_pass = oldPassword.getText().toString();
-                        new_pass = newPassword.getText().toString();
+                        String old_pass = md5Util.encrypt(oldPassword.getText().toString());
+                        new_pass = md5Util.encrypt(newPassword.getText().toString());
                         User user = DataSupport.where("user_id=?", id + "").findFirst(User.class);
                         if (user.getPassword().equals(old_pass)) {
                             User user1 = new User();
@@ -216,11 +258,6 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
-    private void openAlbum() {
-        Intent intent = new Intent("android.intent.action.GET_CONTENT");
-        intent.setType("image/*");
-        startActivityForResult(intent, CHOOSE_PHOTO);
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -236,93 +273,152 @@ public class Settings extends AppCompatActivity implements View.OnClickListener 
                 break;
         }
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        switch (requestCode) {
-            case CHOOSE_PHOTO:
-                if (resultCode == RESULT_OK) {
-                    if (Build.VERSION.SDK_INT >= 21) {
-                        handleImageOnKitKat(intent);
-                    } else {
-                        handleImageBeforekitKat(intent);
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    @TargetApi(19)
-    private void handleImageOnKitKat(Intent data) {
-        imagePath = null;
-        Uri uri = data.getData();
-        if (DocumentsContract.isDocumentUri(this, uri)) {
-            String docId = DocumentsContract.getDocumentId(uri);
-            if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
-                String id = docId.split(":")[1];
-                String selection = MediaStore.Images.Media._ID + "=" + id;
-                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
-            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
-                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
-                imagePath = getImagePath(contentUri, null);
-            }
-        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            imagePath = getImagePath(uri, null);
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            imagePath = uri.getPath();
-        }
-        User user = new User();
-        user.setHeadPicture(imagePath);
-        user.updateAll("user_id=?", GlobalData.getUserId() + "");
-        displayImage(imagePath);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                httpUtil.sendOkHttpToChangeHead( GlobalData.getUserId(),imagePath);
-            }
-        }).start();
-    }
-
-    private void handleImageBeforekitKat(Intent intent) {
-        Uri uri = intent.getData();
-        imagePath = getImagePath(uri, null);
-        displayImage(imagePath);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                httpUtil.sendOkHttpToChangeHead( GlobalData.getUserId(),imagePath);
-            }
-        }).start();
-    }
-
-    private String getImagePath(Uri uri, String selection) {
-        String path = null;
-        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-            }
-            cursor.close();
-        }
-        return path;
-    }
-
-    private void displayImage(String imagepath) {
-        if (imagepath != null) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagepath);
-            head.setImageBitmap(bitmap);
-        } else {
-            Toast.makeText(this, "failed to get image", Toast.LENGTH_SHORT).show();
-        }
-    }
-
     private void requestWritePermission() {
         if (ContextCompat.checkSelfPermission(Settings.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(Settings.this, new String[]{
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, 1);
+        }
+    }
+    private void openAlbum() {
+        Intent intent = new Intent("android.intent.action.PICK");
+        intent.setType("image/*");
+        startActivityForResult(intent, CHOOSE_PHOTO);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        switch (requestCode) {
+            case CHOOSE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    startPhotoZoom(intent,CROP_REQUEST_CODE);
+                }
+                break;
+            case CROP_REQUEST_CODE:
+                if(mCutUri!=null){
+                    displayImage(mCutUri);
+                }break;
+            default:
+                break;
+        }
+    }
+    private void startPhotoZoom(Intent data, int REQUE_CODE_CROP) {
+        try{
+            uri=data.getData();
+            Intent intent = new Intent("com.android.camera.action.CROP");
+            //设置裁剪之后的图片路径文件
+            cutfile = new File(Environment.getExternalStorageDirectory().getPath(),
+                    "cutcamera.png"); //随便命名一个
+            imagePath=Environment.getExternalStorageDirectory().getPath()+"/cutcamera.png";
+            if (cutfile.exists()){ //如果已经存在，则先删除,这里应该是上传到服务器，然后再删除本地的，没服务器，只能这样了
+                cutfile.delete();
+            }
+            cutfile.createNewFile();
+            //初始化 uri
+            Uri imageUri = uri; //返回来的 uri
+            Uri outputUri = null; //真实的 uri
+            outputUri = Uri.fromFile(cutfile);
+            mCutUri = outputUri;
+            // crop为true是设置在开启的intent中设置显示的view可以剪裁
+            intent.putExtra("crop",true);
+            // aspectX,aspectY 是宽高的比例，这里设置正方形
+            if (Build.MANUFACTURER.equals("HUAWEI")) {
+                intent.putExtra("aspectX", 9998);
+                intent.putExtra("aspectY", 9999);
+            } else {
+                intent.putExtra("aspectX", 1);
+                intent.putExtra("aspectY", 1);
+            }
+            //设置要裁剪的宽高
+            intent.putExtra("outputX", 700); //200dp
+            intent.putExtra("outputY",700);
+            intent.putExtra("scale",true);
+            //如果图片过大，会导致oom，这里设置为false
+            intent.putExtra("return-data",false);
+            if (imageUri != null) {
+                intent.setDataAndType(imageUri, "image/*");
+            }
+            if (outputUri != null) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
+            }
+            intent.putExtra("noFaceDetection", true);
+            //压缩图片
+            intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+            startActivityForResult(intent, REQUE_CODE_CROP);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    private void displayImage(Uri uri) {
+        try{
+            if (uri != null) {
+                final Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
+                head.setImageBitmap(bitmap);
+                SaveBitmap.SaveBitmap(bitmap);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        uploadImage();
+                    }
+                }).start();
+            } else {
+                /*Toast.makeText(this, "failed to get image", Toast.LENGTH_SHORT).show();*/
+            }
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+    }
+    public void uploadImage() {
+        String url="http://192.168.43.166:3000/get/updateHead";
+        try{
+            OkHttpClient okHttpClient = new OkHttpClient();
+            File file = cutfile;
+            RequestBody image = RequestBody.create(MediaType.parse("image/png"), file);//文件与类型放入请求体
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("file", file.getName(),image)
+                    .addFormDataPart("userId",GlobalData.getUserId()+"")
+                    .build();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build();
+            Response response = okHttpClient.newCall(request).execute();
+            String responseData=response.body().string();
+            JSONArray jsonArray=new JSONArray(responseData);
+            JSONObject jsonObject=jsonArray.getJSONObject(0);
+            String headPicture=jsonObject.getString("headPicture");
+            User user=new User();
+            user.setHeadPicture(headPicture);
+            user.updateAll("user_id=?",GlobalData.getUserId()+"");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    private class MyTask extends AsyncTask<Void,Integer, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try{
+                bitmap=UrlToBitmap.UrlToBitmap(url);
+                publishProgress();
+            }catch (Exception e){
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+        // 方法4：onPostExecute（）
+        // 作用：接收线程任务执行结果、将执行结果显示到UI组件
+        // 注：必须复写，从而自定义UI操作
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if(result){
+                head.setImageBitmap(bitmap);
+            }
         }
     }
 }

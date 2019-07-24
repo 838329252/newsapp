@@ -16,6 +16,7 @@ import com.example.newsapp.db.GlobalData;
 import com.example.newsapp.db.JDBC;
 import com.example.newsapp.db.User;
 import com.example.newsapp.util.HttpUtil;
+import com.example.newsapp.util.MD5Util;
 
 import org.litepal.crud.DataSupport;
 
@@ -32,11 +33,13 @@ public class RegisterActivity extends AppCompatActivity {
     private HttpUtil httpUtil;
     private String response;
     private JDBC jdbc=new JDBC();
+    private MD5Util md5Util;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         httpUtil=new HttpUtil();
+        md5Util=new MD5Util();
         userAccountEdit=(EditText)findViewById(R.id.userAccount);
         passwordEdit=(EditText)findViewById(R.id.password);
         toLogin=(TextView)findViewById(R.id.toLogin);
@@ -45,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 userAccount=userAccountEdit.getText().toString();
-                password=passwordEdit.getText().toString();
+                password=md5Util.encrypt(passwordEdit.getText().toString());
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
